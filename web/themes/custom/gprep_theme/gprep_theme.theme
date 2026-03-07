@@ -1,0 +1,281 @@
+<?php
+
+/**
+ * @file
+ * Theme hooks for the GPREP theme.
+ */
+
+use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function gprep_theme_preprocess_html(array &$variables): void {
+  $variables['attributes']['class'][] = 'home-2';
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function gprep_theme_preprocess_page(array &$variables): void {
+  $config = \Drupal::config('gprep_site_settings.settings');
+  $current_path = \Drupal::service('path.current')->getPath();
+  $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+  $variables['theme_path'] = '/' . \Drupal::service('extension.list.theme')->getPath('gprep_theme');
+  $variables['is_front_page'] = \Drupal::service('path.matcher')->isFrontPage();
+  $variables['current_path_alias'] = $current_path_alias;
+  $variables['is_about_page'] = $current_path_alias === '/about';
+  $variables['is_enrolled_members_page'] = $current_path_alias === '/enrolled-members';
+  $variables['is_contact_page'] = $current_path_alias === '/contact';
+  $variables['is_map_page'] = $current_path_alias === '/map';
+  $variables['gprep_settings'] = [
+    'phone' => $config->get('phone') ?: '',
+    'phone_link' => $config->get('phone_link') ?: '',
+    'email' => $config->get('email') ?: '',
+    'address' => $config->get('address') ?: '',
+    'emergency_label' => $config->get('emergency_label') ?: '',
+    'emergency_phone' => $config->get('emergency_phone') ?: '',
+    'emergency_phone_link' => $config->get('emergency_phone_link') ?: '',
+    'facebook_url' => $config->get('facebook_url') ?: '',
+    'twitter_url' => $config->get('twitter_url') ?: '',
+    'footer_copyright' => $config->get('footer_copyright') ?: '',
+    'language_label' => $config->get('language_label') ?: 'English',
+    'map_embed_url' => $config->get('map_embed_url') ?: '',
+  ];
+  $variables['header_menu_items'] = gprep_theme_get_menu_items('main');
+  $variables['footer_resources_menu_items'] = gprep_theme_get_menu_items('footer-resources');
+  $variables['footer_quick_links_menu_items'] = gprep_theme_get_menu_items('footer-quick-links');
+  if ($variables['is_about_page']) {
+    $variables['about_page_partner_section'] = gprep_theme_get_homepage_single_node('homepage_partner_section');
+    $variables['about_page_partner_municipalities'] = gprep_theme_get_homepage_nodes('partner_municipality', 20);
+  }
+  if ($variables['is_enrolled_members_page']) {
+    $variables['enrolled_members_page_section'] = gprep_theme_get_homepage_single_node('home_enrolled_section');
+    $variables['enrolled_members_page_items'] = gprep_theme_get_homepage_nodes('enrolled_member', 50);
+  }
+  if ($variables['is_contact_page']) {
+    $variables['contact_page_form'] = [];
+    if (\Drupal::moduleHandler()->moduleExists('webform')) {
+      $webform = \Drupal::entityTypeManager()->getStorage('webform')->load('contact_us');
+      if ($webform) {
+        $variables['contact_page_form'] = \Drupal::entityTypeManager()->getViewBuilder('webform')->view($webform);
+      }
+    }
+  }
+  if ($variables['is_front_page']) {
+    $variables['homepage_banner_items'] = gprep_theme_get_homepage_nodes('emergency_banner_item', 10);
+    $variables['homepage_hero_slides'] = gprep_theme_get_homepage_nodes('hero_slide', 10);
+    $variables['homepage_emergency_updates'] = gprep_theme_get_homepage_nodes('emergency_update', 20);
+    $variables['homepage_about_section'] = gprep_theme_get_homepage_single_node('homepage_about_section');
+    $variables['homepage_partner_section'] = gprep_theme_get_homepage_single_node('homepage_partner_section');
+    $variables['homepage_partner_municipalities'] = gprep_theme_get_homepage_nodes('partner_municipality', 20);
+    $variables['homepage_resources_section'] = gprep_theme_get_homepage_single_node('homepage_resources_section');
+    $variables['homepage_resource_items'] = gprep_theme_get_homepage_nodes('resource_item', 6);
+    $variables['homepage_faq_section'] = gprep_theme_get_homepage_single_node('homepage_faq_section');
+    $variables['homepage_faq_items'] = gprep_theme_get_homepage_nodes('faq_item', 10);
+    $variables['homepage_enrolled_members_section'] = gprep_theme_get_homepage_single_node('home_enrolled_section');
+    $variables['homepage_enrolled_members'] = gprep_theme_get_homepage_nodes('enrolled_member', 8);
+    $variables['homepage_stakeholders_section'] = gprep_theme_get_homepage_single_node('home_stakeholder_section');
+    $variables['homepage_stakeholder_items'] = gprep_theme_get_homepage_nodes('stakeholder_item', 8);
+    $variables['homepage_news_section'] = gprep_theme_get_homepage_single_node('home_news_section');
+    $variables['homepage_news_items'] = gprep_theme_get_homepage_nodes('news_item', 3);
+  }
+}
+
+/**
+ * Returns a normalized menu tree for Twig.
+ */
+function gprep_theme_get_menu_items(string $menu_name): array {
+  $menu_tree = \Drupal::menuTree();
+  $parameters = (new MenuTreeParameters())
+    ->setMaxDepth(3)
+    ->onlyEnabledLinks();
+  $tree = $menu_tree->load($menu_name, $parameters);
+  if (!$tree) {
+    return [];
+  }
+
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
+  $tree = $menu_tree->transform($tree, $manipulators);
+
+  return gprep_theme_normalize_menu_tree($tree);
+}
+
+/**
+ * Normalizes a menu tree for Twig output.
+ */
+function gprep_theme_normalize_menu_tree(array $tree): array {
+  $items = [];
+  foreach ($tree as $element) {
+    $link = $element->link;
+    if (!$link->isEnabled()) {
+      continue;
+    }
+    $items[] = [
+      'title' => $link->getTitle(),
+      'url' => $link->getUrlObject()->toString(),
+      'below' => gprep_theme_normalize_menu_tree($element->subtree),
+    ];
+  }
+  return $items;
+}
+
+/**
+ * Returns normalized homepage nodes.
+ */
+function gprep_theme_get_homepage_nodes(string $bundle, int $limit): array {
+  $query = \Drupal::entityQuery('node')
+    ->accessCheck(TRUE)
+    ->condition('type', $bundle)
+    ->condition('status', NodeInterface::PUBLISHED)
+    ->sort('field_display_order', 'ASC')
+    ->sort('created', 'DESC')
+    ->range(0, $limit);
+  $nids = $query->execute();
+  if (!$nids) {
+    return [];
+  }
+
+  $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
+  $items = [];
+  $file_url_generator = \Drupal::service('file_url_generator');
+
+  foreach ($nodes as $node) {
+    $item = [
+      'title' => $node->label(),
+      'url' => $node->toUrl()->toString(),
+      'description' => '',
+      'tagline' => '',
+      'primary_body' => '',
+      'secondary_heading' => '',
+      'secondary_body' => '',
+      'summary' => '',
+      'answer_body' => '',
+      'person_role' => '',
+      'display_date' => '',
+      'date_day' => '',
+      'date_month' => '',
+      'button_text' => '',
+      'button_link' => '',
+      'image_url' => '',
+      'icon_image_url' => '',
+      'partner_url' => '',
+      'update_time' => '',
+      'update_relative_time' => '',
+      'banner_prefix' => '',
+      'banner_message' => '',
+    ];
+
+    if ($node->hasField('field_slide_description') && !$node->get('field_slide_description')->isEmpty()) {
+      $item['description'] = $node->get('field_slide_description')->value;
+    }
+    if ($node->hasField('field_section_tagline') && !$node->get('field_section_tagline')->isEmpty()) {
+      $item['tagline'] = $node->get('field_section_tagline')->value;
+    }
+    if ($node->hasField('field_primary_body') && !$node->get('field_primary_body')->isEmpty()) {
+      $item['primary_body'] = $node->get('field_primary_body')->value;
+    }
+    if ($node->hasField('field_secondary_heading') && !$node->get('field_secondary_heading')->isEmpty()) {
+      $item['secondary_heading'] = $node->get('field_secondary_heading')->value;
+    }
+    if ($node->hasField('field_secondary_body') && !$node->get('field_secondary_body')->isEmpty()) {
+      $item['secondary_body'] = $node->get('field_secondary_body')->value;
+    }
+    if ($node->hasField('field_resource_summary') && !$node->get('field_resource_summary')->isEmpty()) {
+      $item['summary'] = $node->get('field_resource_summary')->value;
+    }
+    if ($node->hasField('field_answer_body') && !$node->get('field_answer_body')->isEmpty()) {
+      $item['answer_body'] = $node->get('field_answer_body')->value;
+    }
+    if ($node->hasField('field_person_role') && !$node->get('field_person_role')->isEmpty()) {
+      $item['person_role'] = $node->get('field_person_role')->value;
+    }
+    if ($node->hasField('field_display_date') && !$node->get('field_display_date')->isEmpty()) {
+      $item['display_date'] = $node->get('field_display_date')->value;
+      $parts = preg_split('/\s+/', trim($item['display_date']), 2);
+      $item['date_day'] = $parts[0] ?? '';
+      $item['date_month'] = $parts[1] ?? '';
+    }
+    if ($node->hasField('field_button_text') && !$node->get('field_button_text')->isEmpty()) {
+      $item['button_text'] = $node->get('field_button_text')->value;
+    }
+    if ($node->hasField('field_button_link') && !$node->get('field_button_link')->isEmpty()) {
+      $item['button_link'] = $node->get('field_button_link')->first()->getUrl()->toString();
+    }
+    if ($node->hasField('field_slide_image') && !$node->get('field_slide_image')->isEmpty()) {
+      $file = $node->get('field_slide_image')->entity;
+      if ($file) {
+        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
+      }
+    }
+    if ($node->hasField('field_section_image') && !$node->get('field_section_image')->isEmpty()) {
+      $file = $node->get('field_section_image')->entity;
+      if ($file) {
+        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
+      }
+    }
+    if ($node->hasField('field_logo_image') && !$node->get('field_logo_image')->isEmpty()) {
+      $file = $node->get('field_logo_image')->entity;
+      if ($file) {
+        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
+      }
+    }
+    if ($node->hasField('field_card_image') && !$node->get('field_card_image')->isEmpty()) {
+      $file = $node->get('field_card_image')->entity;
+      if ($file) {
+        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
+      }
+    }
+    if ($node->hasField('field_icon_image') && !$node->get('field_icon_image')->isEmpty()) {
+      $file = $node->get('field_icon_image')->entity;
+      if ($file) {
+        $item['icon_image_url'] = $file_url_generator->generateString($file->getFileUri());
+      }
+    }
+    if ($node->hasField('field_profile_image') && !$node->get('field_profile_image')->isEmpty()) {
+      $file = $node->get('field_profile_image')->entity;
+      if ($file) {
+        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
+      }
+    }
+    if ($node->hasField('field_update_time') && !$node->get('field_update_time')->isEmpty()) {
+      $item['update_time'] = $node->get('field_update_time')->value;
+    }
+    if ($node->hasField('field_update_relative_time') && !$node->get('field_update_relative_time')->isEmpty()) {
+      $item['update_relative_time'] = $node->get('field_update_relative_time')->value;
+    }
+    if ($node->hasField('field_update_link') && !$node->get('field_update_link')->isEmpty()) {
+      $item['url'] = $node->get('field_update_link')->first()->getUrl()->toString();
+    }
+
+    if ($bundle === 'emergency_banner_item') {
+      $parts = preg_split('/\s*[–-]\s*/u', $item['title'], 2);
+      if (!empty($parts[1])) {
+        $item['banner_prefix'] = trim($parts[0]) . ' -';
+        $item['banner_message'] = trim($parts[1]);
+      }
+      else {
+        $item['banner_message'] = $item['title'];
+      }
+    }
+    if ($node->hasField('field_partner_url') && !$node->get('field_partner_url')->isEmpty()) {
+      $item['partner_url'] = $node->get('field_partner_url')->first()->getUrl()->toString();
+    }
+
+    $items[] = $item;
+  }
+
+  return $items;
+}
+
+/**
+ * Returns a single normalized homepage node.
+ */
+function gprep_theme_get_homepage_single_node(string $bundle): array {
+  $items = gprep_theme_get_homepage_nodes($bundle, 1);
+  return $items[0] ?? [];
+}
