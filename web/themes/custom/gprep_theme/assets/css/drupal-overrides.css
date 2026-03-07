@@ -1,0 +1,217 @@
+.dialog-off-canvas-main-canvas {
+  min-height: 100vh;
+}
+
+.layout-content {
+  min-height: 220px;
+}
+
+.layout-content .messages-list,
+.layout-content .messages {
+  margin: 24px auto;
+  max-width: 1320px;
+  padding: 0 12px;
+}
+
+.layout-content .tabs,
+.layout-content .action-links {
+  margin: 24px auto;
+  max-width: 1320px;
+  padding: 0 12px;
+}
+
+.breakingNewsArea .brack-text-rigt {
+  position: relative;
+}
+
+.breakingNewsArea .brack-text-rigt .gprep-emergency-marquee {
+  align-items: center;
+  animation: gprep-emergency-ticker 28s linear infinite;
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: max-content;
+  will-change: transform;
+}
+
+.breakingNewsArea .brack-text-rigt .gprep-emergency-marquee:hover {
+  animation-play-state: paused;
+}
+
+.breakingNewsArea .brack-text-rigt .gprep-emergency-marquee li {
+  display: block;
+  flex: 0 0 auto;
+  float: none;
+}
+
+@keyframes gprep-emergency-ticker {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.gprep-hero-slider {
+  position: relative;
+  overflow: hidden;
+}
+
+.gprep-hero-slider-track {
+  position: relative;
+}
+
+.gprep-hero-slider .gprep-hero-slide {
+  display: none;
+}
+
+.gprep-hero-slider .gprep-hero-slide.is-active {
+  display: flex;
+}
+
+.gprep-hero-slider.owl-theme .owl-nav {
+  margin-top: 0;
+}
+
+.gprep-hero-slider.owl-theme .owl-nav [class*=owl-] {
+  color: var(--color-white);
+  font-size: 20px;
+  margin: 0;
+  padding: 0;
+  background: var(--color-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  height: 45px;
+  width: 45px;
+  line-height: 45px;
+  border: 0;
+  border-radius: 50px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.gprep-hero-slider.owl-theme .owl-nav [class*=owl-]:hover {
+  background: var(--color-white);
+  color: var(--theme-color);
+}
+
+.gprep-hero-slider.owl-theme .owl-nav .owl-prev,
+.gprep-hero-slider.owl-theme .owl-nav .owl-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.gprep-hero-slider.owl-theme .owl-nav .owl-prev {
+  left: 10px;
+}
+
+.gprep-hero-slider.owl-theme .owl-nav .owl-next {
+  right: 10px;
+}
+
+.gprep-hero-slider.owl-theme .owl-dots {
+  position: absolute;
+  text-align: center;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+}
+
+.gprep-hero-slider.owl-theme .owl-dots .owl-dot {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.gprep-hero-slider.owl-theme .owl-dots .owl-dot span {
+  background: var(--color-white);
+  margin: 5px;
+  border-radius: 50px;
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+  transition: var(--transition);
+}
+
+.gprep-hero-slider.owl-theme .owl-dots .owl-dot.active span {
+  background: var(--color-white);
+  width: 20px;
+}
+
+.gprep-home-about-body p {
+  font-size: 16px;
+  line-height: 24px;
+  margin-bottom: 16px;
+}
+
+.gprep-partner-shell {
+  padding: 0 100px;
+}
+
+.gprep-partner-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+}
+
+.gprep-partner-grid a {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 90px;
+}
+
+.gprep-partner-grid img {
+  max-height: 78px;
+  object-fit: contain;
+  width: auto;
+  max-width: 100%;
+}
+
+.service-text p:last-child,
+.gprep-home-faq-body p:last-child {
+  margin-bottom: 0;
+}
+
+.gprep-enrolled-intro p:last-child,
+.gprep-stakeholder-intro p:last-child,
+.campaign-text p:last-child {
+  margin-bottom: 0;
+}
+
+.enrolled-members-area .gprep-enrolled-intro,
+.enrolled-members-area .gprep-enrolled-intro p {
+  color: var(--color-white);
+}
+
+.gprep-team-grid {
+  row-gap: 24px;
+}
+
+@media (max-width: 1199px) {
+  .gprep-partner-shell {
+    padding: 0 40px;
+  }
+
+  .gprep-partner-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .gprep-partner-shell {
+    padding: 0;
+  }
+
+  .gprep-partner-grid {
+    gap: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
