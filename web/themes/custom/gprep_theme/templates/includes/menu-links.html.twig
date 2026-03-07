@@ -1,0 +1,15 @@
+{% if items %}
+  <ul{{ attributes|default(create_attribute()) }}>
+    {% for item in items %}
+      <li{% if item.below %} class="dropdown-submenu"{% endif %}>
+        <a href="{{ item.url }}"{% if item.below %} class="dropdown-item dropdown-toggle"{% else %} class="dropdown-item"{% endif %}>{{ item.title|raw }}</a>
+        {% if item.below %}
+          {% include '@gprep_theme/includes/menu-links.html.twig' with {
+            items: item.below,
+            attributes: create_attribute({'class': ['dropdown-menu']})
+          } only %}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

@@ -1,0 +1,10 @@
+name: GPREP Theme
+type: theme
+description: Custom Drupal theme for GPREP header and footer.
+core_version_requirement: ^11
+base theme: false
+logo: assets/img/logo/logo.png
+libraries:
+  - gprep_theme/global
+regions:
+  content: Content
