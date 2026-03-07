@@ -1,0 +1,5 @@
+name: GPREP Homepage Manager
+type: module
+description: Provides editable homepage content structures for the GPREP site.
+package: Custom
+core_version_requirement: ^11

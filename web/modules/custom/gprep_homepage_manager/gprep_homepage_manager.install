@@ -1,0 +1,289 @@
+<?php
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\node\Entity\NodeType;
+
+/**
+ * Implements hook_install().
+ */
+function gprep_homepage_manager_install(): void {
+  $types = [
+    'hero_slide' => 'Hero Slide',
+    'emergency_banner_item' => 'Emergency Banner Item',
+    'emergency_update' => 'Emergency Update',
+    'homepage_about_section' => 'Homepage About Section',
+    'homepage_partner_section' => 'Homepage Partner Section',
+    'partner_municipality' => 'Partner Municipality',
+    'homepage_resources_section' => 'Homepage Resources Section',
+    'resource_item' => 'Resource Item',
+    'homepage_faq_section' => 'Homepage FAQ Section',
+    'faq_item' => 'FAQ Item',
+    'home_enrolled_section' => 'Homepage Enrolled Members Section',
+    'enrolled_member' => 'Enrolled Member',
+    'home_stakeholder_section' => 'Homepage Stakeholders Section',
+    'stakeholder_item' => 'Stakeholder Item',
+    'home_news_section' => 'Homepage News Section',
+    'news_item' => 'News Item',
+  ];
+
+  foreach ($types as $machine_name => $label) {
+    if (!NodeType::load($machine_name)) {
+      NodeType::create([
+        'type' => $machine_name,
+        'name' => $label,
+      ])->save();
+    }
+  }
+
+  _gprep_homepage_manager_add_integer_field('field_display_order', 'Display Order', ['hero_slide', 'emergency_banner_item', 'emergency_update']);
+  _gprep_homepage_manager_add_string_field('field_button_text', 'Button Text', ['hero_slide'], 255);
+  _gprep_homepage_manager_add_link_field('field_button_link', 'Button Link', ['hero_slide']);
+  _gprep_homepage_manager_add_text_long_field('field_slide_description', 'Slide Description', ['hero_slide']);
+  _gprep_homepage_manager_add_image_field('field_slide_image', 'Slide Image', ['hero_slide']);
+  _gprep_homepage_manager_add_string_field('field_update_time', 'Update Time', ['emergency_update'], 255);
+  _gprep_homepage_manager_add_string_field('field_update_relative_time', 'Relative Time', ['emergency_update'], 255);
+  _gprep_homepage_manager_add_link_field('field_update_link', 'Update Link', ['emergency_update']);
+  _gprep_homepage_manager_add_string_field('field_section_tagline', 'Section Tagline', ['homepage_about_section'], 255);
+  _gprep_homepage_manager_add_string_field('field_secondary_heading', 'Secondary Heading', ['homepage_about_section'], 255);
+  _gprep_homepage_manager_add_text_long_field('field_primary_body', 'Primary Body', ['homepage_about_section']);
+  _gprep_homepage_manager_add_text_long_field('field_secondary_body', 'Secondary Body', ['homepage_about_section']);
+  _gprep_homepage_manager_add_image_field('field_section_image', 'Section Image', ['homepage_about_section']);
+  _gprep_homepage_manager_add_string_field('field_button_text', 'Button Text', ['homepage_about_section'], 255);
+  _gprep_homepage_manager_add_link_field('field_button_link', 'Button Link', ['homepage_about_section']);
+  _gprep_homepage_manager_add_integer_field('field_display_order', 'Display Order', ['partner_municipality', 'resource_item', 'faq_item']);
+  _gprep_homepage_manager_add_string_field('field_section_tagline', 'Section Tagline', ['homepage_faq_section'], 255);
+  _gprep_homepage_manager_add_string_field('field_secondary_heading', 'Secondary Heading', ['homepage_faq_section'], 255);
+  _gprep_homepage_manager_add_text_long_field('field_primary_body', 'Primary Body', ['homepage_faq_section']);
+  _gprep_homepage_manager_add_string_field('field_button_text', 'Button Text', ['homepage_resources_section', 'homepage_faq_section', 'resource_item'], 255);
+  _gprep_homepage_manager_add_link_field('field_button_link', 'Button Link', ['homepage_resources_section', 'homepage_faq_section', 'resource_item']);
+  _gprep_homepage_manager_add_image_field('field_logo_image', 'Logo Image', ['partner_municipality']);
+  _gprep_homepage_manager_add_link_field('field_partner_url', 'Partner URL', ['partner_municipality']);
+  _gprep_homepage_manager_add_image_field('field_card_image', 'Card Image', ['resource_item']);
+  _gprep_homepage_manager_add_image_field('field_icon_image', 'Icon Image', ['resource_item']);
+  _gprep_homepage_manager_add_text_long_field('field_resource_summary', 'Resource Summary', ['resource_item']);
+  _gprep_homepage_manager_add_text_long_field('field_answer_body', 'Answer Body', ['faq_item']);
+  _gprep_homepage_manager_add_text_long_field('field_primary_body', 'Primary Body', ['home_enrolled_section', 'home_stakeholder_section']);
+  _gprep_homepage_manager_add_string_field('field_button_text', 'Button Text', ['home_enrolled_section', 'home_stakeholder_section', 'news_item'], 255);
+  _gprep_homepage_manager_add_link_field('field_button_link', 'Button Link', ['home_enrolled_section', 'home_stakeholder_section', 'news_item']);
+  _gprep_homepage_manager_add_integer_field('field_display_order', 'Display Order', ['enrolled_member', 'stakeholder_item', 'news_item']);
+  _gprep_homepage_manager_add_string_field('field_person_role', 'Designation', ['enrolled_member', 'stakeholder_item'], 255);
+  _gprep_homepage_manager_add_image_field('field_profile_image', 'Profile Image', ['enrolled_member', 'stakeholder_item']);
+  _gprep_homepage_manager_add_string_field('field_display_date', 'Display Date', ['news_item'], 50);
+  _gprep_homepage_manager_add_image_field('field_card_image', 'Card Image', ['news_item']);
+  _gprep_homepage_manager_add_text_long_field('field_resource_summary', 'Summary', ['news_item']);
+}
+
+/**
+ * Adds homepage about section support for existing installs.
+ */
+function gprep_homepage_manager_update_11001(): void {
+  if (!NodeType::load('homepage_about_section')) {
+    NodeType::create([
+      'type' => 'homepage_about_section',
+      'name' => 'Homepage About Section',
+    ])->save();
+  }
+
+  _gprep_homepage_manager_add_string_field('field_section_tagline', 'Section Tagline', ['homepage_about_section'], 255);
+  _gprep_homepage_manager_add_string_field('field_secondary_heading', 'Secondary Heading', ['homepage_about_section'], 255);
+  _gprep_homepage_manager_add_text_long_field('field_primary_body', 'Primary Body', ['homepage_about_section']);
+  _gprep_homepage_manager_add_text_long_field('field_secondary_body', 'Secondary Body', ['homepage_about_section']);
+  _gprep_homepage_manager_add_image_field('field_section_image', 'Section Image', ['homepage_about_section']);
+  _gprep_homepage_manager_add_string_field('field_button_text', 'Button Text', ['homepage_about_section'], 255);
+  _gprep_homepage_manager_add_link_field('field_button_link', 'Button Link', ['homepage_about_section']);
+}
+
+/**
+ * Adds partner, resources, and FAQ homepage support for existing installs.
+ */
+function gprep_homepage_manager_update_11002(): void {
+  $types = [
+    'homepage_partner_section' => 'Homepage Partner Section',
+    'partner_municipality' => 'Partner Municipality',
+    'homepage_resources_section' => 'Homepage Resources Section',
+    'resource_item' => 'Resource Item',
+    'homepage_faq_section' => 'Homepage FAQ Section',
+    'faq_item' => 'FAQ Item',
+  ];
+
+  foreach ($types as $machine_name => $label) {
+    if (!NodeType::load($machine_name)) {
+      NodeType::create([
+        'type' => $machine_name,
+        'name' => $label,
+      ])->save();
+    }
+  }
+
+  _gprep_homepage_manager_add_integer_field('field_display_order', 'Display Order', ['partner_municipality', 'resource_item', 'faq_item']);
+  _gprep_homepage_manager_add_string_field('field_section_tagline', 'Section Tagline', ['homepage_faq_section'], 255);
+  _gprep_homepage_manager_add_string_field('field_secondary_heading', 'Secondary Heading', ['homepage_faq_section'], 255);
+  _gprep_homepage_manager_add_text_long_field('field_primary_body', 'Primary Body', ['homepage_faq_section']);
+  _gprep_homepage_manager_add_string_field('field_button_text', 'Button Text', ['homepage_resources_section', 'homepage_faq_section', 'resource_item'], 255);
+  _gprep_homepage_manager_add_link_field('field_button_link', 'Button Link', ['homepage_resources_section', 'homepage_faq_section', 'resource_item']);
+  _gprep_homepage_manager_add_image_field('field_logo_image', 'Logo Image', ['partner_municipality']);
+  _gprep_homepage_manager_add_link_field('field_partner_url', 'Partner URL', ['partner_municipality']);
+  _gprep_homepage_manager_add_image_field('field_card_image', 'Card Image', ['resource_item']);
+  _gprep_homepage_manager_add_image_field('field_icon_image', 'Icon Image', ['resource_item']);
+  _gprep_homepage_manager_add_text_long_field('field_resource_summary', 'Resource Summary', ['resource_item']);
+  _gprep_homepage_manager_add_text_long_field('field_answer_body', 'Answer Body', ['faq_item']);
+}
+
+/**
+ * Adds enrolled members, stakeholders, and news homepage support.
+ */
+function gprep_homepage_manager_update_11003(): void {
+  $types = [
+    'home_enrolled_section' => 'Homepage Enrolled Members Section',
+    'enrolled_member' => 'Enrolled Member',
+    'home_stakeholder_section' => 'Homepage Stakeholders Section',
+    'stakeholder_item' => 'Stakeholder Item',
+    'home_news_section' => 'Homepage News Section',
+    'news_item' => 'News Item',
+  ];
+
+  foreach ($types as $machine_name => $label) {
+    if (!NodeType::load($machine_name)) {
+      NodeType::create([
+        'type' => $machine_name,
+        'name' => $label,
+      ])->save();
+    }
+  }
+
+  _gprep_homepage_manager_add_text_long_field('field_primary_body', 'Primary Body', ['home_enrolled_section', 'home_stakeholder_section']);
+  _gprep_homepage_manager_add_string_field('field_button_text', 'Button Text', ['home_enrolled_section', 'home_stakeholder_section', 'news_item'], 255);
+  _gprep_homepage_manager_add_link_field('field_button_link', 'Button Link', ['home_enrolled_section', 'home_stakeholder_section', 'news_item']);
+  _gprep_homepage_manager_add_integer_field('field_display_order', 'Display Order', ['enrolled_member', 'stakeholder_item', 'news_item']);
+  _gprep_homepage_manager_add_string_field('field_person_role', 'Designation', ['enrolled_member', 'stakeholder_item'], 255);
+  _gprep_homepage_manager_add_image_field('field_profile_image', 'Profile Image', ['enrolled_member', 'stakeholder_item']);
+  _gprep_homepage_manager_add_string_field('field_display_date', 'Display Date', ['news_item'], 50);
+  _gprep_homepage_manager_add_image_field('field_card_image', 'Card Image', ['news_item']);
+  _gprep_homepage_manager_add_text_long_field('field_resource_summary', 'Summary', ['news_item']);
+}
+
+/**
+ * Adds an integer field.
+ */
+function _gprep_homepage_manager_add_integer_field(string $field_name, string $label, array $bundles): void {
+  if (!FieldStorageConfig::loadByName('node', $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'type' => 'integer',
+    ])->save();
+  }
+
+  foreach ($bundles as $bundle) {
+    if (!FieldConfig::loadByName('node', $bundle, $field_name)) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $bundle,
+        'label' => $label,
+      ])->save();
+    }
+  }
+}
+
+/**
+ * Adds a string field.
+ */
+function _gprep_homepage_manager_add_string_field(string $field_name, string $label, array $bundles, int $max_length): void {
+  if (!FieldStorageConfig::loadByName('node', $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'type' => 'string',
+      'settings' => ['max_length' => $max_length],
+    ])->save();
+  }
+
+  foreach ($bundles as $bundle) {
+    if (!FieldConfig::loadByName('node', $bundle, $field_name)) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $bundle,
+        'label' => $label,
+      ])->save();
+    }
+  }
+}
+
+/**
+ * Adds a long text field.
+ */
+function _gprep_homepage_manager_add_text_long_field(string $field_name, string $label, array $bundles): void {
+  if (!FieldStorageConfig::loadByName('node', $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'type' => 'text_long',
+    ])->save();
+  }
+
+  foreach ($bundles as $bundle) {
+    if (!FieldConfig::loadByName('node', $bundle, $field_name)) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $bundle,
+        'label' => $label,
+      ])->save();
+    }
+  }
+}
+
+/**
+ * Adds a link field.
+ */
+function _gprep_homepage_manager_add_link_field(string $field_name, string $label, array $bundles): void {
+  if (!FieldStorageConfig::loadByName('node', $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'type' => 'link',
+    ])->save();
+  }
+
+  foreach ($bundles as $bundle) {
+    if (!FieldConfig::loadByName('node', $bundle, $field_name)) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $bundle,
+        'label' => $label,
+      ])->save();
+    }
+  }
+}
+
+/**
+ * Adds an image field.
+ */
+function _gprep_homepage_manager_add_image_field(string $field_name, string $label, array $bundles): void {
+  if (!FieldStorageConfig::loadByName('node', $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'type' => 'image',
+      'settings' => [
+        'uri_scheme' => 'public',
+        'default_image' => ['uuid' => NULL, 'alt' => '', 'title' => '', 'width' => NULL, 'height' => NULL],
+      ],
+    ])->save();
+  }
+
+  foreach ($bundles as $bundle) {
+    if (!FieldConfig::loadByName('node', $bundle, $field_name)) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $bundle,
+        'label' => $label,
+      ])->save();
+    }
+  }
+}
