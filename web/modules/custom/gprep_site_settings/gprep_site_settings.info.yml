@@ -1,0 +1,5 @@
+name: GPREP Site Settings
+type: module
+description: Provides editable site settings for the GPREP theme.
+package: Custom
+core_version_requirement: ^11

@@ -1,0 +1,5 @@
+gprep_site_settings.form:
+  title: 'GPREP site settings'
+  description: 'Manage contact, social, and emergency details for the GPREP theme.'
+  route_name: gprep_site_settings.form
+  parent: system.admin_config_system

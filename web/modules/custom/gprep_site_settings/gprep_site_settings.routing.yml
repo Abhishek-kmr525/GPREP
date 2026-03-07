@@ -1,0 +1,7 @@
+gprep_site_settings.form:
+  path: '/admin/config/system/gprep-site-settings'
+  defaults:
+    _form: '\Drupal\gprep_site_settings\Form\GprepSiteSettingsForm'
+    _title: 'GPREP site settings'
+  requirements:
+    _permission: 'administer site configuration'
