@@ -51,13 +51,16 @@
 - project delivery folder created
 - requirements and RFP review completed
 - repo initialized and pushed to GitHub branch `codex/project-setup`
-- homepage built in Drupal
+- user manual updated for homepage, enrolled members, contact, and map
+
+## Deployed
+
+- homepage built in Drupal and deployed to server
 - header and footer made backend-editable
 - hero slider connected to Drupal content
 - homepage sections built with content models
-- About page created
-- Enrolled Members page created from existing model
-- Contact page created with editable global contact details
+- About page created and deployed
+- Enrolled Members page created from existing model and deployed
+- Contact page created with editable global contact details and deployed
 - Webform installed and configured for contact submissions
-- Map page created without banner
-- user manual updated for homepage, enrolled members, contact, and map
+- Map page created without banner and deployed

@@ -6,12 +6,28 @@ Track the Drupal website delivery for GPREP from active build through pre-launch
 
 ## Recommended Trello Lists
 
-- `Client Approved / Locked`
-- `Ready To Start`
-- `In Progress`
-- `Blocked / Waiting`
-- `Review / QA`
+- `Backlog`
+- `MOM Actions`
+- `To Do`
+- `Doing`
 - `Done`
+- `Deployed`
+
+## Working Flow
+
+Use this delivery path for all feature work:
+
+1. build and verify locally
+2. finalize the feature locally
+3. push the finalized work to GitHub with proper commits
+4. deploy the finalized version to the server
+5. move the Trello card to `Deployed`
+
+Card meaning:
+- `To Do`: approved to start
+- `Doing`: actively being worked on locally
+- `Done`: completed locally and finalized, ready for or already included in GitHub push
+- `Deployed`: pushed to server and verified live
 
 ## Delivery Rules
 
@@ -31,6 +47,7 @@ Track the Drupal website delivery for GPREP from active build through pre-launch
   - user manual
   - GitHub branch/commit status
   - Trello card status
+- A feature should only move to `Deployed` after live server verification.
 
 ## Project Deadline
 
