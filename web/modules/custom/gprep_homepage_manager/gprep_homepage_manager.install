@@ -62,6 +62,7 @@ function gprep_homepage_manager_install(): void {
   _gprep_homepage_manager_add_image_field('field_card_image', 'Card Image', ['resource_item']);
   _gprep_homepage_manager_add_image_field('field_icon_image', 'Icon Image', ['resource_item']);
   _gprep_homepage_manager_add_text_long_field('field_resource_summary', 'Resource Summary', ['resource_item']);
+  _gprep_homepage_manager_add_text_long_field('field_resource_body', 'Resource Detail Content', ['resource_item']);
   _gprep_homepage_manager_add_text_long_field('field_answer_body', 'Answer Body', ['faq_item']);
   _gprep_homepage_manager_add_text_long_field('field_primary_body', 'Primary Body', ['home_enrolled_section', 'home_stakeholder_section']);
   _gprep_homepage_manager_add_string_field('field_button_text', 'Button Text', ['home_enrolled_section', 'home_stakeholder_section', 'news_item'], 255);
@@ -127,6 +128,7 @@ function gprep_homepage_manager_update_11002(): void {
   _gprep_homepage_manager_add_image_field('field_card_image', 'Card Image', ['resource_item']);
   _gprep_homepage_manager_add_image_field('field_icon_image', 'Icon Image', ['resource_item']);
   _gprep_homepage_manager_add_text_long_field('field_resource_summary', 'Resource Summary', ['resource_item']);
+  _gprep_homepage_manager_add_text_long_field('field_resource_body', 'Resource Detail Content', ['resource_item']);
   _gprep_homepage_manager_add_text_long_field('field_answer_body', 'Answer Body', ['faq_item']);
 }
 
@@ -161,6 +163,29 @@ function gprep_homepage_manager_update_11003(): void {
   _gprep_homepage_manager_add_string_field('field_display_date', 'Display Date', ['news_item'], 50);
   _gprep_homepage_manager_add_image_field('field_card_image', 'Card Image', ['news_item']);
   _gprep_homepage_manager_add_text_long_field('field_resource_summary', 'Summary', ['news_item']);
+}
+
+/**
+ * Adds long-form detail content for resource pages.
+ */
+function gprep_homepage_manager_update_11004(): void {
+  _gprep_homepage_manager_add_text_long_field('field_resource_body', 'Resource Detail Content', ['resource_item']);
+}
+
+/**
+ * Adds news detail fields and incident taxonomy support.
+ */
+function gprep_homepage_manager_update_11005(): void {
+  if (!NodeType::load('incident_type')) {
+    NodeType::create([
+      'type' => 'incident_type',
+      'name' => 'Incident Type',
+    ])->save();
+  }
+  _gprep_homepage_manager_add_text_long_field('field_news_body', 'News Detail Content', ['news_item']);
+  _gprep_homepage_manager_add_string_field('field_display_time', 'Display Time', ['news_item'], 50);
+  _gprep_homepage_manager_add_link_field('field_source_url', 'Source URL', ['news_item']);
+  _gprep_homepage_manager_add_node_reference_field('field_incident', 'Incident', ['news_item'], 'incident_type');
 }
 
 /**
@@ -255,6 +280,42 @@ function _gprep_homepage_manager_add_link_field(string $field_name, string $labe
         'entity_type' => 'node',
         'bundle' => $bundle,
         'label' => $label,
+      ])->save();
+    }
+  }
+}
+
+/**
+ * Adds a node reference field.
+ */
+function _gprep_homepage_manager_add_node_reference_field(string $field_name, string $label, array $bundles, string $target_bundle): void {
+  if (!FieldStorageConfig::loadByName('node', $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'node',
+      ],
+      'cardinality' => -1,
+    ])->save();
+  }
+
+  foreach ($bundles as $bundle) {
+    if (!FieldConfig::loadByName('node', $bundle, $field_name)) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $bundle,
+        'label' => $label,
+        'settings' => [
+          'handler' => 'default:node',
+          'handler_settings' => [
+            'target_bundles' => [
+              $target_bundle => $target_bundle,
+            ],
+          ],
+        ],
       ])->save();
     }
   }
