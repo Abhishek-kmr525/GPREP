@@ -22,6 +22,7 @@ function gprep_theme_preprocess_page(array &$variables): void {
   $config = \Drupal::config('gprep_site_settings.settings');
   $current_path = \Drupal::service('path.current')->getPath();
   $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+  $request = \Drupal::request();
   $variables['theme_path'] = '/' . \Drupal::service('extension.list.theme')->getPath('gprep_theme');
   $variables['is_front_page'] = \Drupal::service('path.matcher')->isFrontPage();
   $variables['current_path_alias'] = $current_path_alias;
@@ -29,6 +30,12 @@ function gprep_theme_preprocess_page(array &$variables): void {
   $variables['is_enrolled_members_page'] = $current_path_alias === '/enrolled-members';
   $variables['is_contact_page'] = $current_path_alias === '/contact';
   $variables['is_map_page'] = $current_path_alias === '/map';
+  $variables['is_resources_page'] = $current_path_alias === '/resources';
+  $variables['is_faq_page'] = $current_path_alias === '/faq';
+  $variables['is_news_page'] = $current_path_alias === '/news';
+  $current_node = \Drupal::routeMatch()->getParameter('node');
+  $variables['is_resource_item_page'] = $current_node instanceof NodeInterface && $current_node->bundle() === 'resource_item';
+  $variables['is_news_item_page'] = $current_node instanceof NodeInterface && $current_node->bundle() === 'news_item';
   $variables['gprep_settings'] = [
     'phone' => $config->get('phone') ?: '',
     'phone_link' => $config->get('phone_link') ?: '',
@@ -54,6 +61,33 @@ function gprep_theme_preprocess_page(array &$variables): void {
     $variables['enrolled_members_page_section'] = gprep_theme_get_homepage_single_node('home_enrolled_section');
     $variables['enrolled_members_page_items'] = gprep_theme_get_homepage_nodes('enrolled_member', 50);
   }
+  if ($variables['is_resources_page']) {
+    $variables['resources_page_section'] = gprep_theme_get_homepage_single_node('homepage_resources_section');
+    $variables['resources_page_items'] = gprep_theme_get_homepage_nodes('resource_item', 50);
+  }
+  if ($variables['is_faq_page']) {
+    $variables['faq_page_section'] = gprep_theme_get_homepage_single_node('homepage_faq_section');
+    $variables['faq_page_items'] = gprep_theme_get_homepage_nodes('faq_item', 50);
+  }
+  if ($variables['is_news_page']) {
+    $selected_incident = (int) $request->query->get('incident', 0);
+    $search_query = trim((string) $request->query->get('q', ''));
+    $variables['news_page_section'] = gprep_theme_get_homepage_single_node('home_news_section');
+    $variables['news_page_selected_incident'] = $selected_incident;
+    $variables['news_page_search_query'] = $search_query;
+    $variables['news_page_items'] = gprep_theme_get_news_items(50, $selected_incident ?: NULL, NULL, $search_query);
+    $variables['news_page_incidents'] = gprep_theme_get_incident_items_with_counts();
+    $variables['news_page_recent_items'] = gprep_theme_get_news_items(5);
+  }
+  if ($variables['is_resource_item_page']) {
+    $variables['resource_detail_item'] = gprep_theme_normalize_detail_node($current_node);
+    $variables['resource_detail_sidebar_items'] = gprep_theme_get_homepage_nodes('resource_item', 50);
+  }
+  if ($variables['is_news_item_page']) {
+    $variables['news_detail_item'] = gprep_theme_normalize_news_detail_node($current_node);
+    $variables['news_page_incidents'] = gprep_theme_get_incident_items_with_counts();
+    $variables['news_page_recent_items'] = gprep_theme_get_news_items(5, NULL, (int) $current_node->id());
+  }
   if ($variables['is_contact_page']) {
     $variables['contact_page_form'] = [];
     if (\Drupal::moduleHandler()->moduleExists('webform')) {
@@ -66,7 +100,7 @@ function gprep_theme_preprocess_page(array &$variables): void {
   if ($variables['is_front_page']) {
     $variables['homepage_banner_items'] = gprep_theme_get_homepage_nodes('emergency_banner_item', 10);
     $variables['homepage_hero_slides'] = gprep_theme_get_homepage_nodes('hero_slide', 10);
-    $variables['homepage_emergency_updates'] = gprep_theme_get_homepage_nodes('emergency_update', 20);
+    $variables['homepage_emergency_updates'] = gprep_theme_get_news_items(20);
     $variables['homepage_about_section'] = gprep_theme_get_homepage_single_node('homepage_about_section');
     $variables['homepage_partner_section'] = gprep_theme_get_homepage_single_node('homepage_partner_section');
     $variables['homepage_partner_municipalities'] = gprep_theme_get_homepage_nodes('partner_municipality', 20);
@@ -79,7 +113,7 @@ function gprep_theme_preprocess_page(array &$variables): void {
     $variables['homepage_stakeholders_section'] = gprep_theme_get_homepage_single_node('home_stakeholder_section');
     $variables['homepage_stakeholder_items'] = gprep_theme_get_homepage_nodes('stakeholder_item', 8);
     $variables['homepage_news_section'] = gprep_theme_get_homepage_single_node('home_news_section');
-    $variables['homepage_news_items'] = gprep_theme_get_homepage_nodes('news_item', 3);
+    $variables['homepage_news_items'] = gprep_theme_get_news_items(3);
   }
 }
 
@@ -146,6 +180,7 @@ function gprep_theme_get_homepage_nodes(string $bundle, int $limit): array {
 
   foreach ($nodes as $node) {
     $item = [
+      'nid' => (int) $node->id(),
       'title' => $node->label(),
       'url' => $node->toUrl()->toString(),
       'description' => '',
@@ -278,4 +313,165 @@ function gprep_theme_get_homepage_nodes(string $bundle, int $limit): array {
 function gprep_theme_get_homepage_single_node(string $bundle): array {
   $items = gprep_theme_get_homepage_nodes($bundle, 1);
   return $items[0] ?? [];
+}
+
+/**
+ * Returns a normalized node for detail templates.
+ */
+function gprep_theme_normalize_detail_node(NodeInterface $node): array {
+  $item = [
+    'nid' => (int) $node->id(),
+    'title' => $node->label(),
+    'url' => $node->toUrl()->toString(),
+    'summary' => '',
+    'body' => '',
+    'image_url' => '',
+  ];
+
+  if ($node->hasField('field_resource_summary') && !$node->get('field_resource_summary')->isEmpty()) {
+    $item['summary'] = $node->get('field_resource_summary')->value;
+  }
+  if ($node->hasField('field_resource_body') && !$node->get('field_resource_body')->isEmpty()) {
+    $item['body'] = $node->get('field_resource_body')->value;
+  }
+  if ($node->hasField('field_card_image') && !$node->get('field_card_image')->isEmpty()) {
+    $file = $node->get('field_card_image')->entity;
+    if ($file) {
+      $item['image_url'] = \Drupal::service('file_url_generator')->generateString($file->getFileUri());
+    }
+  }
+
+  return $item;
+}
+
+/**
+ * Returns normalized news nodes.
+ */
+function gprep_theme_get_news_items(int $limit, ?int $incident_nid = NULL, ?int $exclude_nid = NULL, string $search = ''): array {
+  $query = \Drupal::entityQuery('node')
+    ->accessCheck(TRUE)
+    ->condition('type', 'news_item')
+    ->condition('status', NodeInterface::PUBLISHED)
+    ->sort('created', 'DESC')
+    ->range(0, $limit);
+
+  if ($incident_nid) {
+    $query->condition('field_incident.target_id', $incident_nid);
+  }
+  if ($exclude_nid) {
+    $query->condition('nid', $exclude_nid, '<>');
+  }
+
+  $nids = $query->execute();
+  if (!$nids) {
+    return [];
+  }
+
+  $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
+  usort($nodes, static fn(NodeInterface $a, NodeInterface $b): int => $b->getCreatedTime() <=> $a->getCreatedTime());
+
+  $items = [];
+  foreach ($nodes as $node) {
+    $item = gprep_theme_normalize_news_detail_node($node);
+    if ($search !== '') {
+      $haystack = mb_strtolower(trim(strip_tags($item['title'] . ' ' . $item['summary'] . ' ' . $item['body'])));
+      if (!str_contains($haystack, mb_strtolower($search))) {
+        continue;
+      }
+    }
+    $items[] = $item;
+    if (count($items) >= $limit) {
+      break;
+    }
+  }
+
+  return $items;
+}
+
+/**
+ * Returns incident items with usage counts.
+ */
+function gprep_theme_get_incident_items_with_counts(): array {
+  $nids = \Drupal::entityQuery('node')
+    ->accessCheck(TRUE)
+    ->condition('type', 'incident_type')
+    ->condition('status', NodeInterface::PUBLISHED)
+    ->sort('title', 'ASC')
+    ->execute();
+
+  if (!$nids) {
+    return [];
+  }
+
+  $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
+  $items = [];
+
+  foreach ($nodes as $node) {
+    $count = \Drupal::entityQuery('node')
+      ->accessCheck(TRUE)
+      ->condition('type', 'news_item')
+      ->condition('status', NodeInterface::PUBLISHED)
+      ->condition('field_incident.target_id', (int) $node->id())
+      ->count()
+      ->execute();
+
+    $items[] = [
+      'tid' => (int) $node->id(),
+      'name' => trim(strip_tags($node->label())),
+      'count' => (int) $count,
+      'url' => '/news?incident=' . (int) $node->id(),
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Returns a normalized news node for detail templates.
+ */
+function gprep_theme_normalize_news_detail_node(NodeInterface $node): array {
+  $item = [
+    'nid' => (int) $node->id(),
+    'title' => trim(html_entity_decode(strip_tags($node->label()), ENT_QUOTES | ENT_HTML5)),
+    'url' => $node->toUrl()->toString(),
+    'summary' => '',
+    'body' => '',
+    'image_url' => '',
+    'display_date' => date('j M Y', $node->getCreatedTime()),
+    'display_date_long' => date('F j, Y', $node->getCreatedTime()),
+    'display_time' => '',
+    'update_time' => '',
+    'update_relative_time' => '',
+    'incident' => '',
+    'source_url' => '',
+  ];
+
+  if ($node->hasField('field_resource_summary') && !$node->get('field_resource_summary')->isEmpty()) {
+    $item['summary'] = $node->get('field_resource_summary')->value;
+  }
+  if ($node->hasField('field_news_body') && !$node->get('field_news_body')->isEmpty()) {
+    $item['body'] = $node->get('field_news_body')->value;
+  }
+  if ($node->hasField('field_card_image') && !$node->get('field_card_image')->isEmpty()) {
+    $file = $node->get('field_card_image')->entity;
+    if ($file) {
+      $item['image_url'] = \Drupal::service('file_url_generator')->generateString($file->getFileUri());
+    }
+  }
+  if ($node->hasField('field_display_time') && !$node->get('field_display_time')->isEmpty()) {
+    $item['display_time'] = $node->get('field_display_time')->value;
+  }
+  if ($node->hasField('field_incident') && !$node->get('field_incident')->isEmpty()) {
+    $item['incident'] = trim(strip_tags($node->get('field_incident')->entity?->label() ?? ''));
+  }
+  if ($node->hasField('field_source_url') && !$node->get('field_source_url')->isEmpty()) {
+    $item['source_url'] = $node->get('field_source_url')->first()->getUrl()->toString();
+  }
+
+  $item['date_day'] = date('d', $node->getCreatedTime());
+  $item['date_month'] = date('M Y', $node->getCreatedTime());
+  $item['update_time'] = $item['display_time'] ?: date('h:i A', $node->getCreatedTime());
+  $item['update_relative_time'] = $item['display_date_long'];
+
+  return $item;
 }

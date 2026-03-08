@@ -186,6 +186,38 @@
   margin-bottom: 0;
 }
 
+.gprep-news-summary p:last-child,
+.blog-details p:last-child {
+  margin-bottom: 0;
+}
+
+.news-filters {
+  background: #f4f7ff;
+  border: 1px solid #d6e1fb;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.news-filters .form-label {
+  color: #054b7e;
+  font-weight: 600;
+}
+
+.news-filters .form-control,
+.news-filters .form-select {
+  min-height: 50px;
+}
+
+.widget .category-list a.active {
+  background: #054b7e;
+  color: #fff;
+}
+
+.widget .category-list a.active span,
+.widget .category-list a.active i {
+  color: #fff;
+}
+
 .enrolled-members-area .gprep-enrolled-intro,
 .enrolled-members-area .gprep-enrolled-intro p {
   color: var(--color-white);
