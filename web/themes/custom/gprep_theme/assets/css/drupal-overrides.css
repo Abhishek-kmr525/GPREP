@@ -223,6 +223,34 @@
   color: var(--color-white);
 }
 
+.emergency-header-only .header-top {
+  box-shadow: none;
+}
+
+.emergencySectionArea .gprep-emergency-marquee {
+  align-items: center;
+  display: flex;
+  gap: 48px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: max-content;
+}
+
+.emergencySectionArea .emergencyBoxDetails p:last-child,
+.emergencySectionArea .newsRightArea li a:last-child,
+.emergencyResourcesSection .tab-pane p:last-child {
+  margin-bottom: 0;
+}
+
+.emergencyResourcesSection iframe {
+  background: #fff;
+}
+
+.footerEmergencyArea .footer-contact strong {
+  color: var(--color-white);
+}
+
 .gprep-team-grid {
   row-gap: 24px;
 }

@@ -38,3 +38,6 @@ gprep_site_settings.settings:
     map_embed_url:
       type: string
       label: 'Map embed URL'
+    emergency_mode:
+      type: boolean
+      label: 'Emergency mode'

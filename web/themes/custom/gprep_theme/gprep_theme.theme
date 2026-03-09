@@ -7,6 +7,7 @@
 
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 
 /**
  * Implements hook_preprocess_html().
@@ -25,6 +26,8 @@ function gprep_theme_preprocess_page(array &$variables): void {
   $request = \Drupal::request();
   $variables['theme_path'] = '/' . \Drupal::service('extension.list.theme')->getPath('gprep_theme');
   $variables['is_front_page'] = \Drupal::service('path.matcher')->isFrontPage();
+  $variables['is_emergency_mode'] = (bool) $config->get('emergency_mode');
+  $variables['show_emergency_homepage'] = $variables['is_front_page'] && $variables['is_emergency_mode'];
   $variables['current_path_alias'] = $current_path_alias;
   $variables['is_about_page'] = $current_path_alias === '/about';
   $variables['is_enrolled_members_page'] = $current_path_alias === '/enrolled-members';
@@ -49,10 +52,14 @@ function gprep_theme_preprocess_page(array &$variables): void {
     'footer_copyright' => $config->get('footer_copyright') ?: '',
     'language_label' => $config->get('language_label') ?: 'English',
     'map_embed_url' => $config->get('map_embed_url') ?: '',
+    'emergency_mode' => (bool) $config->get('emergency_mode'),
   ];
   $variables['header_menu_items'] = gprep_theme_get_menu_items('main');
   $variables['footer_resources_menu_items'] = gprep_theme_get_menu_items('footer-resources');
   $variables['footer_quick_links_menu_items'] = gprep_theme_get_menu_items('footer-quick-links');
+  $cacheability = new CacheableMetadata();
+  $cacheability->addCacheTags(['config:gprep_site_settings.settings']);
+  $cacheability->applyTo($variables);
   if ($variables['is_about_page']) {
     $variables['about_page_partner_section'] = gprep_theme_get_homepage_single_node('homepage_partner_section');
     $variables['about_page_partner_municipalities'] = gprep_theme_get_homepage_nodes('partner_municipality', 20);
@@ -114,6 +121,11 @@ function gprep_theme_preprocess_page(array &$variables): void {
     $variables['homepage_stakeholder_items'] = gprep_theme_get_homepage_nodes('stakeholder_item', 8);
     $variables['homepage_news_section'] = gprep_theme_get_homepage_single_node('home_news_section');
     $variables['homepage_news_items'] = gprep_theme_get_news_items(3);
+    if ($variables['show_emergency_homepage']) {
+      $variables['emergency_primary_update'] = $variables['homepage_emergency_updates'][0] ?? [];
+      $variables['emergency_resource_items'] = gprep_theme_get_homepage_nodes('resource_item', 12);
+      $variables['emergency_resource_groups'] = gprep_theme_group_emergency_resources($variables['emergency_resource_items']);
+    }
   }
 }
 
@@ -474,4 +486,40 @@ function gprep_theme_normalize_news_detail_node(NodeInterface $node): array {
   $item['update_relative_time'] = $item['display_date_long'];
 
   return $item;
+}
+
+/**
+ * Groups resources for the emergency-page tab layout.
+ */
+function gprep_theme_group_emergency_resources(array $items): array {
+  $groups = [
+    'support' => [],
+    'reentry' => [],
+    'recovery' => [],
+  ];
+
+  foreach ($items as $item) {
+    $title = mb_strtolower($item['title']);
+    if (str_contains($title, 'return')) {
+      $groups['reentry'][] = $item;
+    }
+    elseif (str_contains($title, 'support') || str_contains($title, 'evacuee')) {
+      $groups['support'][] = $item;
+    }
+    else {
+      $groups['recovery'][] = $item;
+    }
+  }
+
+  if (!$groups['support']) {
+    $groups['support'] = array_slice($items, 0, min(4, count($items)));
+  }
+  if (!$groups['reentry']) {
+    $groups['reentry'] = array_slice($items, min(1, count($items)), min(4, max(count($items) - 1, 0)));
+  }
+  if (!$groups['recovery']) {
+    $groups['recovery'] = array_slice($items, min(2, count($items)), min(4, max(count($items) - 2, 0)));
+  }
+
+  return $groups;
 }

@@ -1,0 +1,51 @@
+.toolbar .toolbar-bar .toolbar-tab > .gprep-toolbar-toggle {
+  align-items: center;
+  color: #fff;
+  display: inline-flex;
+  gap: 10px;
+  height: 44px;
+  padding: 0 14px;
+  text-decoration: none;
+}
+
+.toolbar .toolbar-bar .toolbar-tab > .gprep-toolbar-toggle:hover,
+.toolbar .toolbar-bar .toolbar-tab > .gprep-toolbar-toggle:focus {
+  background: #1f1f1f;
+  color: #fff;
+  text-decoration: none;
+}
+
+.gprep-toolbar-toggle__track {
+  background: #6e6e6e;
+  border-radius: 999px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 22px;
+  padding: 2px;
+  transition: background-color 0.2s ease;
+  width: 42px;
+}
+
+.gprep-toolbar-toggle__thumb {
+  background: #fff;
+  border-radius: 50%;
+  display: block;
+  height: 18px;
+  transition: transform 0.2s ease;
+  width: 18px;
+}
+
+.gprep-toolbar-toggle.is-on .gprep-toolbar-toggle__track {
+  background: #d92d20;
+}
+
+.gprep-toolbar-toggle.is-on .gprep-toolbar-toggle__thumb {
+  transform: translateX(20px);
+}
+
+.gprep-toolbar-toggle__label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}

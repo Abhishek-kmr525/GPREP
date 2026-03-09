@@ -1,0 +1,4 @@
+toolbar-toggle:
+  css:
+    theme:
+      css/toolbar-toggle.css: {}

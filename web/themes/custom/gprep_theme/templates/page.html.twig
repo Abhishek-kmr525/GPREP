@@ -1,4 +1,4 @@
-<header class="header">
+<header class="header{% if show_emergency_homepage %} emergency-header-only{% endif %}">
   <div class="header-top">
     <div class="container">
       <div class="header-top-wrapper">
@@ -12,7 +12,7 @@
                 <li><a href="mailto:{{ gprep_settings.email }}"><i class="far fa-envelopes"></i> {{ gprep_settings.email }}</a></li>
               {% endif %}
               {% if gprep_settings.emergency_phone %}
-                <li class="d-lg-none"><a href="tel:{{ gprep_settings.emergency_phone_link }}"><i class="far fa-phone"></i> {{ gprep_settings.emergency_label }} ({{ gprep_settings.emergency_phone }})</a></li>
+                <li{% if not show_emergency_homepage %} class="d-lg-none"{% endif %}><a href="tel:{{ gprep_settings.emergency_phone_link }}"><i class="far fa-phone"></i> {{ gprep_settings.emergency_label }} ({{ gprep_settings.emergency_phone }})</a></li>
               {% endif %}
             </ul>
           </div>
@@ -44,68 +44,289 @@
     </div>
   </div>
 
-  <div class="main-navigation">
-    <nav class="navbar navbar-expand-lg">
-      <div class="container position-relative">
-        <a class="navbar-brand" href="{{ front_page }}">
-          <img src="{{ theme_path }}/assets/img/logo/logo-light.png" class="logo-display" alt="GPREP logo">
-          <img src="{{ theme_path }}/assets/img/logo/logo.png" class="logo-scrolled" alt="GPREP logo">
-        </a>
+  {% if not show_emergency_homepage %}
+    <div class="main-navigation">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container position-relative">
+          <a class="navbar-brand" href="{{ front_page }}">
+            <img src="{{ theme_path }}/assets/img/logo/logo-light.png" class="logo-display" alt="GPREP logo">
+            <img src="{{ theme_path }}/assets/img/logo/logo.png" class="logo-scrolled" alt="GPREP logo">
+          </a>
 
-        <div class="mobile-menu-right">
-          <div class="search-btn">
-            <button type="button" class="nav-right-link"><i class="far fa-search"></i></button>
-          </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-mobile-icon"><i class="far fa-bars"></i></span>
-          </button>
-        </div>
-
-        <div class="collapse navbar-collapse" id="main_nav">
-          <ul class="navbar-nav">
-            {% for item in header_menu_items %}
-              <li class="nav-item{% if item.below %} dropdown{% endif %}">
-                <a class="nav-link{% if item.below %} dropdown-toggle{% endif %}" href="{{ item.url }}"{% if item.below %} data-bs-toggle="dropdown"{% endif %}>{{ item.title|raw }}</a>
-                {% if item.below %}
-                  {% include '@gprep_theme/includes/menu-links.html.twig' with {
-                    items: item.below,
-                    attributes: create_attribute({'class': ['dropdown-menu', 'fade-down']})
-                  } only %}
-                {% endif %}
-              </li>
-            {% endfor %}
-          </ul>
-          <div class="nav-right">
+          <div class="mobile-menu-right">
             <div class="search-btn">
               <button type="button" class="nav-right-link"><i class="far fa-search"></i></button>
             </div>
-            <div class="nav-right-call">
-              <span class="call-icon"><i class="fal fa-phone-volume"></i></span>
-              <div class="call-content">
-                <span>{{ gprep_settings.emergency_label }}</span>
-                <h5><a href="tel:{{ gprep_settings.emergency_phone_link }}">{{ gprep_settings.emergency_phone }}</a></h5>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-mobile-icon"><i class="far fa-bars"></i></span>
+            </button>
+          </div>
+
+          <div class="collapse navbar-collapse" id="main_nav">
+            <ul class="navbar-nav">
+              {% for item in header_menu_items %}
+                <li class="nav-item{% if item.below %} dropdown{% endif %}">
+                  <a class="nav-link{% if item.below %} dropdown-toggle{% endif %}" href="{{ item.url }}"{% if item.below %} data-bs-toggle="dropdown"{% endif %}>{{ item.title|raw }}</a>
+                  {% if item.below %}
+                    {% include '@gprep_theme/includes/menu-links.html.twig' with {
+                      items: item.below,
+                      attributes: create_attribute({'class': ['dropdown-menu', 'fade-down']})
+                    } only %}
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+            <div class="nav-right">
+              <div class="search-btn">
+                <button type="button" class="nav-right-link"><i class="far fa-search"></i></button>
+              </div>
+              <div class="nav-right-call">
+                <span class="call-icon"><i class="fal fa-phone-volume"></i></span>
+                <div class="call-content">
+                  <span>{{ gprep_settings.emergency_label }}</span>
+                  <h5><a href="tel:{{ gprep_settings.emergency_phone_link }}">{{ gprep_settings.emergency_phone }}</a></h5>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="search-area">
-          <form action="#">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Type Keyword...">
-              <button type="submit" class="search-icon-btn"><i class="far fa-search"></i></button>
-            </div>
-          </form>
+          <div class="search-area">
+            <form action="#">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Type Keyword...">
+                <button type="submit" class="search-icon-btn"><i class="far fa-search"></i></button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
-    </nav>
-  </div>
+      </nav>
+    </div>
+  {% endif %}
 </header>
 
 {% set page_content = page.content|render %}
 
 <main id="main-content" class="main">
-  {% if is_front_page %}
+  {% if show_emergency_homepage %}
+    <section class="emergencySectionArea">
+      <div class="container">
+        <div class="emergencyArea">
+          {% if homepage_banner_items %}
+            <div class="breakingNewsArea mb-5">
+              <div class="braking-inner">
+                <div class="bracking-left">
+                  <h2>Current Emergency</h2>
+                </div>
+                <div class="brack-text-rigt">
+                  <ul class="gprep-emergency-marquee marquee_mode-left" aria-label="Current emergency updates">
+                    {% for item in homepage_banner_items %}
+                      <li>
+                        {% if item.banner_prefix %}
+                          <strong>{{ item.banner_prefix|replace({' -': ' -'}) }}</strong> {{ item.banner_message }}
+                        {% else %}
+                          {{ item.banner_message ?: item.title }}
+                        {% endif %}
+                      </li>
+                    {% endfor %}
+                    {% for item in homepage_banner_items %}
+                      <li aria-hidden="true">
+                        {% if item.banner_prefix %}
+                          <strong>{{ item.banner_prefix|replace({' -': ' -'}) }}</strong> {{ item.banner_message }}
+                        {% else %}
+                          {{ item.banner_message ?: item.title }}
+                        {% endif %}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              <div class="cross"><i class="fa-regular fa-xmark"></i></div>
+            </div>
+          {% endif %}
+
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="emergencyHeadingArea">
+                <h3><span><i class="fa-solid fa-hexagon-exclamation"></i> Incident Details</span></h3>
+                <div class="row mt-5">
+                  <div class="col-md-6">
+                    <div class="emergencyBox">
+                      <h4>Incident Type</h4>
+                      <p>{{ emergency_primary_update.incident ?: 'Emergency Incident' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="emergencyBox">
+                      <h4>Incident Location</h4>
+                      <p>County of Grande Prairie</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="emergencyBox">
+                      <h4>Incident Status</h4>
+                      <p>Active</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="emergencyBox">
+                      <h4>Start Date</h4>
+                      <p>{{ emergency_primary_update.display_date_long ?: 'To be updated' }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="emergencyBoxDetails">
+                  <h1>{{ emergency_primary_update.title ?: 'Emergency details will appear here.' }}</h1>
+                  {% if emergency_primary_update.summary %}
+                    <div>{{ emergency_primary_update.summary|raw }}</div>
+                  {% else %}
+                    <p>Emergency information will replace the regular homepage when emergency mode is enabled.</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="newsRightSection">
+                <div class="newsRightArea">
+                  <h3><span>Emergency Updates</span></h3>
+                  <ul class="marquee_mode" style="height: 380px;">
+                    {% for item in homepage_emergency_updates|slice(0, 10) %}
+                      <li data-hover="{{ item.title }}">
+                        <a href="{{ item.url }}">
+                          <span>{{ item.update_time }} · <span>{{ item.update_relative_time }}</span></span>
+                          {{ item.title }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="emergencyResourcesSection tabDrsignArea">
+      <div class="container">
+        <div class="choos-us-style-one-items mt-120 mt-md-0 mt-xs-0">
+          <div class="site-heading text-center mb-4">
+            <h2 class="site-title">Resources</h2>
+            <div class="heading-divider"></div>
+          </div>
+          <div class="emergencyResourcesBox">
+            <div class="tab-style-two-items">
+              <nav>
+                <div class="nav nav-tabs gao-2" id="emergency-nav-tab" role="tablist">
+                  <button class="nav-link active col" id="emergency-tab-1" data-bs-toggle="tab" data-bs-target="#emergency-pane-1" type="button" role="tab" aria-controls="emergency-pane-1" aria-selected="true">Alberta Emergency Alerts</button>
+                  <button class="nav-link" style="width: 120px;" id="emergency-tab-2" data-bs-toggle="tab" data-bs-target="#emergency-pane-2" type="button" role="tab" aria-controls="emergency-pane-2" aria-selected="false">Map</button>
+                  <button class="nav-link col" id="emergency-tab-3" data-bs-toggle="tab" data-bs-target="#emergency-pane-3" type="button" role="tab" aria-controls="emergency-pane-3" aria-selected="false">Evacuee Resources</button>
+                  <button class="nav-link" style="width: 140px;" id="emergency-tab-4" data-bs-toggle="tab" data-bs-target="#emergency-pane-4" type="button" role="tab" aria-controls="emergency-pane-4" aria-selected="false">Donations</button>
+                  <button class="nav-link col" id="emergency-tab-5" data-bs-toggle="tab" data-bs-target="#emergency-pane-5" type="button" role="tab" aria-controls="emergency-pane-5" aria-selected="false">Temporary Access</button>
+                </div>
+              </nav>
+              <div class="tab-content" id="emergency-nav-tabContent">
+                <div class="tab-pane fade show active" id="emergency-pane-1" role="tabpanel" aria-labelledby="emergency-tab-1">
+                  <p>This alert feed area is reserved for Alberta Emergency Alert integration and public instructions.</p>
+                  <div class="alert alert-warning mt-4">
+                    <strong>Emergency Alert Feed</strong><br>
+                    Connect the approved Alberta emergency alert source here in the next phase.
+                  </div>
+                  <div class="alert alert-danger emergencyAlertDetail">
+                    <h5 class="mb-2"><i class="fa-solid fa-light-emergency-on"></i> Active Emergency Alert</h5>
+                    <p><strong>Type:</strong> {{ emergency_primary_update.incident ?: 'Emergency Incident' }}</p>
+                    <p><strong>Affected Area:</strong> County of Grande Prairie</p>
+                    <p><strong>Date & Time:</strong> {{ emergency_primary_update.display_date_long ?: 'To be updated' }}{% if emergency_primary_update.display_time %} - {{ emergency_primary_update.display_time }}{% endif %}</p>
+                    <p><strong>Instructions:</strong> Follow official guidance and monitor the emergency updates panel for the latest information.</p>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="emergency-pane-2" role="tabpanel" aria-labelledby="emergency-tab-2">
+                  <div class="mapArea p-1 mb-0">
+                    {% if gprep_settings.map_embed_url %}
+                      <iframe src="{{ gprep_settings.map_embed_url }}" style="border:1px solid #ccc; width: 100%; height: 700px; border-radius: 20px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="emergency-pane-3" role="tabpanel" aria-labelledby="emergency-tab-3">
+                  <div class="evacueeResourcesArea">
+                    <nav>
+                      <div class="nav nav-tabs gao-4 p-0" id="emergency-resource-tab" role="tablist">
+                        <button class="nav-link active col" id="emergency-resource-support" data-bs-toggle="tab" data-bs-target="#emergency-resource-support-pane" type="button" role="tab" aria-controls="emergency-resource-support-pane" aria-selected="true">Evacuee Support Guide</button>
+                        <button class="nav-link col" id="emergency-resource-reentry" data-bs-toggle="tab" data-bs-target="#emergency-resource-reentry-pane" type="button" role="tab" aria-controls="emergency-resource-reentry-pane" aria-selected="false">Re-entry Guide</button>
+                        <button class="nav-link col" id="emergency-resource-recovery" data-bs-toggle="tab" data-bs-target="#emergency-resource-recovery-pane" type="button" role="tab" aria-controls="emergency-resource-recovery-pane" aria-selected="false">Recovery Guide</button>
+                      </div>
+                    </nav>
+                    <div class="tab-content" id="emergency-resource-content">
+                      <div class="tab-pane fade show active" id="emergency-resource-support-pane" role="tabpanel" aria-labelledby="emergency-resource-support">
+                        <ul>
+                          {% for item in emergency_resource_groups.support %}
+                            <li class="align-items-center justify-content-between">
+                              <p>{{ item.title }}</p>
+                              <a href="{{ item.url }}" class="btnPdf">Open Resource</a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      <div class="tab-pane fade" id="emergency-resource-reentry-pane" role="tabpanel" aria-labelledby="emergency-resource-reentry">
+                        <ul>
+                          {% for item in emergency_resource_groups.reentry %}
+                            <li class="align-items-center justify-content-between">
+                              <p>{{ item.title }}</p>
+                              <a href="{{ item.url }}" class="btnPdf">Open Resource</a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      <div class="tab-pane fade" id="emergency-resource-recovery-pane" role="tabpanel" aria-labelledby="emergency-resource-recovery">
+                        <ul>
+                          {% for item in emergency_resource_groups.recovery %}
+                            <li class="align-items-center justify-content-between">
+                              <p>{{ item.title }}</p>
+                              <a href="{{ item.url }}" class="btnPdf">Open Resource</a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="emergency-pane-4" role="tabpanel" aria-labelledby="emergency-tab-4">
+                  <div class="evacueeResourcesArea">
+                    <h6>Support Our Cause Through Your Generous Donations</h6>
+                    <div class="donations-content">
+                      <ul>
+                        <li class="align-items-center justify-content-between">
+                          <p>Northwestern Alberta Emergency Recovery Fund</p>
+                          <a href="#" class="btnPdf">Donation Link</a>
+                        </li>
+                        <li class="align-items-center justify-content-between">
+                          <p>Emergency support donations and recovery assistance</p>
+                          <a href="#" class="btnPdf">Click Here</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="emergency-pane-5" role="tabpanel" aria-labelledby="emergency-tab-5">
+                  <h3 class="mb-3">{{ emergency_primary_update.title ?: 'Temporary access information' }}</h3>
+                  {% if emergency_primary_update.summary %}
+                    <div class="mb-3">{{ emergency_primary_update.summary|raw }}</div>
+                  {% else %}
+                    <p class="mb-3">Temporary access instructions will appear here in the next phase.</p>
+                  {% endif %}
+                  <a href="/contact" class="btnPdf">Contact GPREP</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  {% elseif is_front_page %}
     <div class="hero-section">
       <div class="row m-0">
         <div class="col-lg-8 col-xl-8 col-xxl-9 p-0 position-relative">
@@ -1170,69 +1391,116 @@
   {% endif %}
 </main>
 
-<footer class="footer-area">
-  <div class="footer-widget">
-    <div class="container">
-      <div class="row footer-widget-wrapper pt-70 pb-20">
-        <div class="col-md-6 col-lg-3">
-          <div class="footer-widget-box about-us">
-            <a href="{{ front_page }}" class="footer-logo mb-3">
+{% if show_emergency_homepage %}
+  <footer class="footer-area footerEmergencyArea">
+    <div class="footer-widget">
+      <div class="container">
+        <div class="footer-widget-wrapper pt-40 pb-20">
+          <div class="footer-widget-box about-us text-center mb-0">
+            <a href="{{ front_page }}" class="footer-logo">
               <img src="{{ theme_path }}/assets/img/logo/logo-light.png" alt="GPREP logo">
             </a>
-            <ul class="footer-contact">
-              {% if gprep_settings.phone %}
-                <li><a href="tel:{{ gprep_settings.phone_link }}"><i class="far fa-phone"></i> {{ gprep_settings.phone }}</a></li>
-              {% endif %}
-              {% if gprep_settings.emergency_phone %}
-                <li><i class="far fa-phone"></i> {{ gprep_settings.emergency_label }} ({{ gprep_settings.emergency_phone }})</li>
-              {% endif %}
-              {% if gprep_settings.email %}
-                <li><a href="mailto:{{ gprep_settings.email }}"><i class="far fa-envelope"></i> {{ gprep_settings.email }}</a></li>
-              {% endif %}
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-7">
-          <div class="footer-widget-box list">
-            <h4 class="footer-widget-title">Resources</h4>
-            <ul class="footer-list resourcesFooterArea">
-              {% for item in footer_resources_menu_items %}
-                <li><a href="{{ item.url }}"><i class="fas fa-caret-right"></i>{{ item.title|striptags }}</a></li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-2">
-          <div class="footer-widget-box list">
-            <h4 class="footer-widget-title">Quick Link</h4>
-            <ul class="footer-list">
-              {% for item in footer_quick_links_menu_items %}
-                <li><a href="{{ item.url }}"><i class="fas fa-caret-right"></i> {{ item.title|striptags }}</a></li>
-              {% endfor %}
+            <ul class="footer-contact d-block d-md-flex justify-content-center gap-5 mt-3">
+              <li class="d-flex text-start foter-Icon-Box gap-3">
+                <i class="fal fa-phone-volume me-0"></i>
+                <span>{{ gprep_settings.emergency_label }}<br><strong>{{ gprep_settings.emergency_phone }}</strong></span>
+              </li>
+              <li class="d-flex text-start foter-Icon-Box gap-3">
+                <i class="far fa-phone me-0"></i>
+                <span>Call Centre<br><strong>{{ gprep_settings.phone }}</strong></span>
+              </li>
+              <li class="d-flex text-start foter-Icon-Box gap-3">
+                <i class="far fa-envelope me-0"></i>
+                <span>Email Id<br><strong>{{ gprep_settings.email }}</strong></span>
+              </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
-  </div>
+    <div class="copyright">
+      <div class="container">
+        <div class="d-flex justify-content-between">
+          <div class="col-md-6 align-self-center">
+            <p class="copyright-text">&copy; {{ gprep_settings.footer_copyright }}</p>
+          </div>
+          <ul class="footer-social">
+            {% if gprep_settings.facebook_url %}
+              <li><a href="{{ gprep_settings.facebook_url }}"><i class="fab fa-facebook-f"></i></a></li>
+            {% endif %}
+            {% if gprep_settings.twitter_url %}
+              <li><a href="{{ gprep_settings.twitter_url }}"><i class="fab fa-x-twitter"></i></a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+{% else %}
+  <footer class="footer-area">
+    <div class="footer-widget">
+      <div class="container">
+        <div class="row footer-widget-wrapper pt-70 pb-20">
+          <div class="col-md-6 col-lg-3">
+            <div class="footer-widget-box about-us">
+              <a href="{{ front_page }}" class="footer-logo mb-3">
+                <img src="{{ theme_path }}/assets/img/logo/logo-light.png" alt="GPREP logo">
+              </a>
+              <ul class="footer-contact">
+                {% if gprep_settings.phone %}
+                  <li><a href="tel:{{ gprep_settings.phone_link }}"><i class="far fa-phone"></i> {{ gprep_settings.phone }}</a></li>
+                {% endif %}
+                {% if gprep_settings.emergency_phone %}
+                  <li><i class="far fa-phone"></i> {{ gprep_settings.emergency_label }} ({{ gprep_settings.emergency_phone }})</li>
+                {% endif %}
+                {% if gprep_settings.email %}
+                  <li><a href="mailto:{{ gprep_settings.email }}"><i class="far fa-envelope"></i> {{ gprep_settings.email }}</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-7">
+            <div class="footer-widget-box list">
+              <h4 class="footer-widget-title">Resources</h4>
+              <ul class="footer-list resourcesFooterArea">
+                {% for item in footer_resources_menu_items %}
+                  <li><a href="{{ item.url }}"><i class="fas fa-caret-right"></i>{{ item.title|striptags }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-2">
+            <div class="footer-widget-box list">
+              <h4 class="footer-widget-title">Quick Link</h4>
+              <ul class="footer-list">
+                {% for item in footer_quick_links_menu_items %}
+                  <li><a href="{{ item.url }}"><i class="fas fa-caret-right"></i> {{ item.title|striptags }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div class="copyright">
-    <div class="container">
-      <div class="d-flex justify-content-between">
-        <div class="col-md-6 align-self-center">
-          <p class="copyright-text">
-            &copy; {{ gprep_settings.footer_copyright }}
-          </p>
+    <div class="copyright">
+      <div class="container">
+        <div class="d-flex justify-content-between">
+          <div class="col-md-6 align-self-center">
+            <p class="copyright-text">
+              &copy; {{ gprep_settings.footer_copyright }}
+            </p>
+          </div>
+          <ul class="footer-social">
+            {% if gprep_settings.facebook_url %}
+              <li><a href="{{ gprep_settings.facebook_url }}"><i class="fab fa-facebook-f"></i></a></li>
+            {% endif %}
+            {% if gprep_settings.twitter_url %}
+              <li><a href="{{ gprep_settings.twitter_url }}"><i class="fab fa-x-twitter"></i></a></li>
+            {% endif %}
+          </ul>
         </div>
-        <ul class="footer-social">
-          {% if gprep_settings.facebook_url %}
-            <li><a href="{{ gprep_settings.facebook_url }}"><i class="fab fa-facebook-f"></i></a></li>
-          {% endif %}
-          {% if gprep_settings.twitter_url %}
-            <li><a href="{{ gprep_settings.twitter_url }}"><i class="fab fa-x-twitter"></i></a></li>
-          {% endif %}
-        </ul>
       </div>
     </div>
-  </div>
-</footer>
+  </footer>
+{% endif %}

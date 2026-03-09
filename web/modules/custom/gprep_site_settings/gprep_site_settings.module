@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Toolbar integration for GPREP site settings.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_toolbar().
+ */
+function gprep_site_settings_toolbar(): array {
+  if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
+    return [];
+  }
+
+  $enabled = (bool) \Drupal::config('gprep_site_settings.settings')->get('emergency_mode');
+  $toggle_url = Url::fromRoute('gprep_site_settings.emergency_toggle');
+  $label = $enabled ? t('Emergency On') : t('Emergency Off');
+
+  $items['gprep_site_settings_emergency_toggle'] = [
+    '#cache' => [
+      'contexts' => ['user.permissions'],
+      'tags' => ['config:gprep_site_settings.settings'],
+    ],
+    '#weight' => 99,
+    'tab' => [
+      '#type' => 'inline_template',
+      '#template' => '<a href="{{ url }}" class="gprep-toolbar-toggle {{ state_class }}" title="{{ title }}"><span class="gprep-toolbar-toggle__track"><span class="gprep-toolbar-toggle__thumb"></span></span><span class="gprep-toolbar-toggle__label">{{ label }}</span></a>',
+      '#context' => [
+        'url' => $toggle_url->toString(),
+        'label' => $label,
+        'title' => $enabled ? t('Turn emergency mode off') : t('Turn emergency mode on'),
+        'state_class' => $enabled ? 'is-on' : 'is-off',
+      ],
+      '#attached' => [
+        'library' => ['gprep_site_settings/toolbar-toggle'],
+      ],
+    ],
+  ];
+
+  return $items;
+}

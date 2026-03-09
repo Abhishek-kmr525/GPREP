@@ -491,6 +491,32 @@ Current behavior:
 - the `/faq` page is dynamic
 - the same FAQ items are reused for homepage and FAQ page
 
+## 19. Emergency Homepage Mode
+
+Public behavior:
+- when `Emergency Mode` is `Off`, `http://localhost:8080/` shows the regular homepage
+- when `Emergency Mode` is `On`, `http://localhost:8080/` shows the emergency homepage layout instead
+
+Admin controls:
+- site settings fallback: `http://localhost:8080/admin/config/system/gprep-site-settings`
+- admin toolbar toggle: available in the top admin bar as `Emergency On` / `Emergency Off`
+
+Current phase-1 behavior:
+- the same homepage URL switches between normal and emergency mode
+- emergency mode keeps the top contact bar
+- emergency mode hides the normal navigation/header
+- emergency mode shows the compact emergency footer
+- emergency mode currently reuses:
+  - current emergency ticker data
+  - latest news for the right-side emergency updates panel
+  - global map URL for the emergency map tab
+  - resource items for the emergency resources tab
+
+Important note:
+- this is phase 1 of the emergency implementation
+- the page switching and toolbar toggle are working
+- section-by-section admin editability for all emergency blocks will be completed next
+
 ## Publishing Notes
 
 - Any content can be unpublished if it should not appear on the website.

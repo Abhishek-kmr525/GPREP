@@ -51,6 +51,12 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Emergency details'),
       '#open' => TRUE,
     ];
+    $form['emergency']['emergency_mode'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable emergency homepage mode'),
+      '#description' => $this->t('When enabled, the public homepage switches from the regular homepage to the emergency homepage layout.'),
+      '#default_value' => $config->get('emergency_mode'),
+    ];
     $form['emergency']['emergency_label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Emergency label'),
@@ -119,6 +125,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       ->set('phone_link', $form_state->getValue('phone_link'))
       ->set('email', $form_state->getValue('email'))
       ->set('address', $form_state->getValue('address'))
+      ->set('emergency_mode', (bool) $form_state->getValue('emergency_mode'))
       ->set('emergency_label', $form_state->getValue('emergency_label'))
       ->set('emergency_phone', $form_state->getValue('emergency_phone'))
       ->set('emergency_phone_link', $form_state->getValue('emergency_phone_link'))
