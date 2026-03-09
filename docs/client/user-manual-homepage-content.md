@@ -501,21 +501,29 @@ Admin controls:
 - site settings fallback: `http://localhost:8080/admin/config/system/gprep-site-settings`
 - admin toolbar toggle: available in the top admin bar as `Emergency On` / `Emergency Off`
 
-Current phase-1 behavior:
+Current emergency behavior:
 - the same homepage URL switches between normal and emergency mode
 - emergency mode keeps the top contact bar
 - emergency mode hides the normal navigation/header
 - emergency mode shows the compact emergency footer
-- emergency mode currently reuses:
+- emergency mode reuses:
   - current emergency ticker data
   - latest news for the right-side emergency updates panel
   - global map URL for the emergency map tab
   - resource items for the emergency resources tab
+- the following emergency sections are editable from site settings:
+  - incident title, summary, and CTA button
+  - Alberta emergency alert intro and feed message
+  - active alert type, area, date/time, and instructions
+  - donations tab heading and donation links
+  - temporary access title, body, and CTA button
 
-Important note:
-- this is phase 1 of the emergency implementation
-- the page switching and toolbar toggle are working
-- section-by-section admin editability for all emergency blocks will be completed next
+Where to edit emergency page content:
+1. Log in as admin.
+2. Open `Configuration`.
+3. Open `GPREP Site Settings`.
+4. Expand `Emergency details`.
+5. Update the emergency homepage fields and save.
 
 ## Publishing Notes
 
@@ -523,6 +531,41 @@ Important note:
 - Use `Display Order` to control the sequence instead of deleting and recreating items.
 - For homepage items, keep titles short so the design remains clean.
 - Banner images should be optimized before upload for better performance.
+
+## Homepage Views And Blocks
+
+Homepage repeatable sections are now managed through Drupal Views:
+- Partner Municipalities
+- Enrolled Members
+- Stakeholders
+- Resources
+- FAQ
+- News
+
+Where to manage the views:
+1. Log in as admin.
+2. Open `Structure`.
+3. Open `Views`.
+4. Look for views starting with `GPREP`.
+
+Homepage static sections now support Drupal blocks:
+- App section
+- 24/7 CTA section
+- Who is GPREP section
+
+Where to place those blocks:
+1. Log in as admin.
+2. Open `Structure`.
+3. Open `Block layout`.
+4. Select the `GPREP Theme`.
+5. Place blocks in these regions:
+   - `Homepage App Section`
+   - `Homepage CTA Section`
+   - `Homepage Who Is GPREP Section`
+
+Important:
+- if no block is placed in those regions, the current fallback theme design still appears
+- this lets us migrate safely without breaking the homepage
 
 ## Recommended Client Workflow
 

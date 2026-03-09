@@ -8,6 +8,7 @@
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\views\Views;
 
 /**
  * Implements hook_preprocess_html().
@@ -54,6 +55,25 @@ function gprep_theme_preprocess_page(array &$variables): void {
     'map_embed_url' => $config->get('map_embed_url') ?: '',
     'emergency_mode' => (bool) $config->get('emergency_mode'),
   ];
+  $variables['emergency_page_settings'] = [
+    'incident_title' => $config->get('emergency_incident_title') ?: '',
+    'incident_body' => nl2br((string) ($config->get('emergency_incident_body') ?: '')),
+    'incident_button_text' => $config->get('emergency_incident_button_text') ?: '',
+    'incident_button_link' => gprep_theme_normalize_config_link((string) ($config->get('emergency_incident_button_link') ?: '')),
+    'alert_intro' => nl2br((string) ($config->get('emergency_alert_intro') ?: '')),
+    'alert_feed_title' => $config->get('emergency_alert_feed_title') ?: '',
+    'alert_feed_message' => nl2br((string) ($config->get('emergency_alert_feed_message') ?: '')),
+    'alert_type' => $config->get('emergency_alert_type') ?: '',
+    'alert_area' => $config->get('emergency_alert_area') ?: '',
+    'alert_datetime' => $config->get('emergency_alert_datetime') ?: '',
+    'alert_instructions' => nl2br((string) ($config->get('emergency_alert_instructions') ?: '')),
+    'donations_heading' => $config->get('emergency_donations_heading') ?: '',
+    'donation_items' => gprep_theme_parse_emergency_link_lines((string) ($config->get('emergency_donations_items') ?: '')),
+    'temporary_access_title' => $config->get('emergency_temporary_access_title') ?: '',
+    'temporary_access_body' => nl2br((string) ($config->get('emergency_temporary_access_body') ?: '')),
+    'temporary_access_button_text' => $config->get('emergency_temporary_access_button_text') ?: '',
+    'temporary_access_button_link' => gprep_theme_normalize_config_link((string) ($config->get('emergency_temporary_access_button_link') ?: '')),
+  ];
   $variables['header_menu_items'] = gprep_theme_get_menu_items('main');
   $variables['footer_resources_menu_items'] = gprep_theme_get_menu_items('footer-resources');
   $variables['footer_quick_links_menu_items'] = gprep_theme_get_menu_items('footer-quick-links');
@@ -63,6 +83,7 @@ function gprep_theme_preprocess_page(array &$variables): void {
   if ($variables['is_about_page']) {
     $variables['about_page_partner_section'] = gprep_theme_get_homepage_single_node('homepage_partner_section');
     $variables['about_page_partner_municipalities'] = gprep_theme_get_homepage_nodes('partner_municipality', 20);
+    $variables['about_page_partner_municipalities_view'] = gprep_theme_render_view('gprep_partner_municipalities', 'block_1');
   }
   if ($variables['is_enrolled_members_page']) {
     $variables['enrolled_members_page_section'] = gprep_theme_get_homepage_single_node('home_enrolled_section');
@@ -111,16 +132,22 @@ function gprep_theme_preprocess_page(array &$variables): void {
     $variables['homepage_about_section'] = gprep_theme_get_homepage_single_node('homepage_about_section');
     $variables['homepage_partner_section'] = gprep_theme_get_homepage_single_node('homepage_partner_section');
     $variables['homepage_partner_municipalities'] = gprep_theme_get_homepage_nodes('partner_municipality', 20);
+    $variables['homepage_partner_municipalities_view'] = gprep_theme_render_view('gprep_partner_municipalities', 'block_1');
     $variables['homepage_resources_section'] = gprep_theme_get_homepage_single_node('homepage_resources_section');
     $variables['homepage_resource_items'] = gprep_theme_get_homepage_nodes('resource_item', 6);
+    $variables['homepage_resources_view'] = gprep_theme_render_view('gprep_homepage_resources', 'block_1');
     $variables['homepage_faq_section'] = gprep_theme_get_homepage_single_node('homepage_faq_section');
     $variables['homepage_faq_items'] = gprep_theme_get_homepage_nodes('faq_item', 10);
+    $variables['homepage_faq_view'] = gprep_theme_render_view('gprep_homepage_faq', 'block_1');
     $variables['homepage_enrolled_members_section'] = gprep_theme_get_homepage_single_node('home_enrolled_section');
     $variables['homepage_enrolled_members'] = gprep_theme_get_homepage_nodes('enrolled_member', 8);
+    $variables['homepage_enrolled_members_view'] = gprep_theme_render_view('gprep_homepage_enrolled_members', 'block_1');
     $variables['homepage_stakeholders_section'] = gprep_theme_get_homepage_single_node('home_stakeholder_section');
     $variables['homepage_stakeholder_items'] = gprep_theme_get_homepage_nodes('stakeholder_item', 8);
+    $variables['homepage_stakeholders_view'] = gprep_theme_render_view('gprep_homepage_stakeholders', 'block_1');
     $variables['homepage_news_section'] = gprep_theme_get_homepage_single_node('home_news_section');
     $variables['homepage_news_items'] = gprep_theme_get_news_items(3);
+    $variables['homepage_news_view'] = gprep_theme_render_view('gprep_homepage_news', 'block_1');
     if ($variables['show_emergency_homepage']) {
       $variables['emergency_primary_update'] = $variables['homepage_emergency_updates'][0] ?? [];
       $variables['emergency_resource_items'] = gprep_theme_get_homepage_nodes('resource_item', 12);
@@ -188,135 +215,121 @@ function gprep_theme_get_homepage_nodes(string $bundle, int $limit): array {
 
   $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
   $items = [];
-  $file_url_generator = \Drupal::service('file_url_generator');
 
   foreach ($nodes as $node) {
-    $item = [
-      'nid' => (int) $node->id(),
-      'title' => $node->label(),
-      'url' => $node->toUrl()->toString(),
-      'description' => '',
-      'tagline' => '',
-      'primary_body' => '',
-      'secondary_heading' => '',
-      'secondary_body' => '',
-      'summary' => '',
-      'answer_body' => '',
-      'person_role' => '',
-      'display_date' => '',
-      'date_day' => '',
-      'date_month' => '',
-      'button_text' => '',
-      'button_link' => '',
-      'image_url' => '',
-      'icon_image_url' => '',
-      'partner_url' => '',
-      'update_time' => '',
-      'update_relative_time' => '',
-      'banner_prefix' => '',
-      'banner_message' => '',
-    ];
-
-    if ($node->hasField('field_slide_description') && !$node->get('field_slide_description')->isEmpty()) {
-      $item['description'] = $node->get('field_slide_description')->value;
-    }
-    if ($node->hasField('field_section_tagline') && !$node->get('field_section_tagline')->isEmpty()) {
-      $item['tagline'] = $node->get('field_section_tagline')->value;
-    }
-    if ($node->hasField('field_primary_body') && !$node->get('field_primary_body')->isEmpty()) {
-      $item['primary_body'] = $node->get('field_primary_body')->value;
-    }
-    if ($node->hasField('field_secondary_heading') && !$node->get('field_secondary_heading')->isEmpty()) {
-      $item['secondary_heading'] = $node->get('field_secondary_heading')->value;
-    }
-    if ($node->hasField('field_secondary_body') && !$node->get('field_secondary_body')->isEmpty()) {
-      $item['secondary_body'] = $node->get('field_secondary_body')->value;
-    }
-    if ($node->hasField('field_resource_summary') && !$node->get('field_resource_summary')->isEmpty()) {
-      $item['summary'] = $node->get('field_resource_summary')->value;
-    }
-    if ($node->hasField('field_answer_body') && !$node->get('field_answer_body')->isEmpty()) {
-      $item['answer_body'] = $node->get('field_answer_body')->value;
-    }
-    if ($node->hasField('field_person_role') && !$node->get('field_person_role')->isEmpty()) {
-      $item['person_role'] = $node->get('field_person_role')->value;
-    }
-    if ($node->hasField('field_display_date') && !$node->get('field_display_date')->isEmpty()) {
-      $item['display_date'] = $node->get('field_display_date')->value;
-      $parts = preg_split('/\s+/', trim($item['display_date']), 2);
-      $item['date_day'] = $parts[0] ?? '';
-      $item['date_month'] = $parts[1] ?? '';
-    }
-    if ($node->hasField('field_button_text') && !$node->get('field_button_text')->isEmpty()) {
-      $item['button_text'] = $node->get('field_button_text')->value;
-    }
-    if ($node->hasField('field_button_link') && !$node->get('field_button_link')->isEmpty()) {
-      $item['button_link'] = $node->get('field_button_link')->first()->getUrl()->toString();
-    }
-    if ($node->hasField('field_slide_image') && !$node->get('field_slide_image')->isEmpty()) {
-      $file = $node->get('field_slide_image')->entity;
-      if ($file) {
-        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
-      }
-    }
-    if ($node->hasField('field_section_image') && !$node->get('field_section_image')->isEmpty()) {
-      $file = $node->get('field_section_image')->entity;
-      if ($file) {
-        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
-      }
-    }
-    if ($node->hasField('field_logo_image') && !$node->get('field_logo_image')->isEmpty()) {
-      $file = $node->get('field_logo_image')->entity;
-      if ($file) {
-        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
-      }
-    }
-    if ($node->hasField('field_card_image') && !$node->get('field_card_image')->isEmpty()) {
-      $file = $node->get('field_card_image')->entity;
-      if ($file) {
-        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
-      }
-    }
-    if ($node->hasField('field_icon_image') && !$node->get('field_icon_image')->isEmpty()) {
-      $file = $node->get('field_icon_image')->entity;
-      if ($file) {
-        $item['icon_image_url'] = $file_url_generator->generateString($file->getFileUri());
-      }
-    }
-    if ($node->hasField('field_profile_image') && !$node->get('field_profile_image')->isEmpty()) {
-      $file = $node->get('field_profile_image')->entity;
-      if ($file) {
-        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
-      }
-    }
-    if ($node->hasField('field_update_time') && !$node->get('field_update_time')->isEmpty()) {
-      $item['update_time'] = $node->get('field_update_time')->value;
-    }
-    if ($node->hasField('field_update_relative_time') && !$node->get('field_update_relative_time')->isEmpty()) {
-      $item['update_relative_time'] = $node->get('field_update_relative_time')->value;
-    }
-    if ($node->hasField('field_update_link') && !$node->get('field_update_link')->isEmpty()) {
-      $item['url'] = $node->get('field_update_link')->first()->getUrl()->toString();
-    }
-
-    if ($bundle === 'emergency_banner_item') {
-      $parts = preg_split('/\s*[–-]\s*/u', $item['title'], 2);
-      if (!empty($parts[1])) {
-        $item['banner_prefix'] = trim($parts[0]) . ' -';
-        $item['banner_message'] = trim($parts[1]);
-      }
-      else {
-        $item['banner_message'] = $item['title'];
-      }
-    }
-    if ($node->hasField('field_partner_url') && !$node->get('field_partner_url')->isEmpty()) {
-      $item['partner_url'] = $node->get('field_partner_url')->first()->getUrl()->toString();
-    }
-
-    $items[] = $item;
+    $items[] = gprep_theme_normalize_homepage_node($node);
   }
 
   return $items;
+}
+
+/**
+ * Returns a normalized homepage node.
+ */
+function gprep_theme_normalize_homepage_node(NodeInterface $node): array {
+  $file_url_generator = \Drupal::service('file_url_generator');
+  $bundle = $node->bundle();
+  $item = [
+    'nid' => (int) $node->id(),
+    'title' => $node->label(),
+    'url' => $node->toUrl()->toString(),
+    'description' => '',
+    'tagline' => '',
+    'primary_body' => '',
+    'secondary_heading' => '',
+    'secondary_body' => '',
+    'summary' => '',
+    'answer_body' => '',
+    'person_role' => '',
+    'display_date' => '',
+    'date_day' => '',
+    'date_month' => '',
+    'button_text' => '',
+    'button_link' => '',
+    'image_url' => '',
+    'icon_image_url' => '',
+    'partner_url' => '',
+    'update_time' => '',
+    'update_relative_time' => '',
+    'banner_prefix' => '',
+    'banner_message' => '',
+  ];
+
+  if ($node->hasField('field_slide_description') && !$node->get('field_slide_description')->isEmpty()) {
+    $item['description'] = $node->get('field_slide_description')->value;
+  }
+  if ($node->hasField('field_section_tagline') && !$node->get('field_section_tagline')->isEmpty()) {
+    $item['tagline'] = $node->get('field_section_tagline')->value;
+  }
+  if ($node->hasField('field_primary_body') && !$node->get('field_primary_body')->isEmpty()) {
+    $item['primary_body'] = $node->get('field_primary_body')->value;
+  }
+  if ($node->hasField('field_secondary_heading') && !$node->get('field_secondary_heading')->isEmpty()) {
+    $item['secondary_heading'] = $node->get('field_secondary_heading')->value;
+  }
+  if ($node->hasField('field_secondary_body') && !$node->get('field_secondary_body')->isEmpty()) {
+    $item['secondary_body'] = $node->get('field_secondary_body')->value;
+  }
+  if ($node->hasField('field_resource_summary') && !$node->get('field_resource_summary')->isEmpty()) {
+    $item['summary'] = $node->get('field_resource_summary')->value;
+  }
+  if ($node->hasField('field_answer_body') && !$node->get('field_answer_body')->isEmpty()) {
+    $item['answer_body'] = $node->get('field_answer_body')->value;
+  }
+  if ($node->hasField('field_person_role') && !$node->get('field_person_role')->isEmpty()) {
+    $item['person_role'] = $node->get('field_person_role')->value;
+  }
+  if ($node->hasField('field_display_date') && !$node->get('field_display_date')->isEmpty()) {
+    $item['display_date'] = $node->get('field_display_date')->value;
+    $parts = preg_split('/\s+/', trim($item['display_date']), 2);
+    $item['date_day'] = $parts[0] ?? '';
+    $item['date_month'] = $parts[1] ?? '';
+  }
+  if ($node->hasField('field_button_text') && !$node->get('field_button_text')->isEmpty()) {
+    $item['button_text'] = $node->get('field_button_text')->value;
+  }
+  if ($node->hasField('field_button_link') && !$node->get('field_button_link')->isEmpty()) {
+    $item['button_link'] = $node->get('field_button_link')->first()->getUrl()->toString();
+  }
+  foreach (['field_slide_image', 'field_section_image', 'field_logo_image', 'field_card_image', 'field_profile_image'] as $field_name) {
+    if ($node->hasField($field_name) && !$node->get($field_name)->isEmpty()) {
+      $file = $node->get($field_name)->entity;
+      if ($file) {
+        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
+        break;
+      }
+    }
+  }
+  if ($node->hasField('field_icon_image') && !$node->get('field_icon_image')->isEmpty()) {
+    $file = $node->get('field_icon_image')->entity;
+    if ($file) {
+      $item['icon_image_url'] = $file_url_generator->generateString($file->getFileUri());
+    }
+  }
+  if ($node->hasField('field_update_time') && !$node->get('field_update_time')->isEmpty()) {
+    $item['update_time'] = $node->get('field_update_time')->value;
+  }
+  if ($node->hasField('field_update_relative_time') && !$node->get('field_update_relative_time')->isEmpty()) {
+    $item['update_relative_time'] = $node->get('field_update_relative_time')->value;
+  }
+  if ($node->hasField('field_update_link') && !$node->get('field_update_link')->isEmpty()) {
+    $item['url'] = $node->get('field_update_link')->first()->getUrl()->toString();
+  }
+  if ($bundle === 'emergency_banner_item') {
+    $parts = preg_split('/\s*[–-]\s*/u', $item['title'], 2);
+    if (!empty($parts[1])) {
+      $item['banner_prefix'] = trim($parts[0]) . ' -';
+      $item['banner_message'] = trim($parts[1]);
+    }
+    else {
+      $item['banner_message'] = $item['title'];
+    }
+  }
+  if ($node->hasField('field_partner_url') && !$node->get('field_partner_url')->isEmpty()) {
+    $item['partner_url'] = $node->get('field_partner_url')->first()->getUrl()->toString();
+  }
+
+  return $item;
 }
 
 /**
@@ -522,4 +535,74 @@ function gprep_theme_group_emergency_resources(array $items): array {
   }
 
   return $groups;
+}
+
+/**
+ * Prepares node teaser variables used by homepage views.
+ */
+function gprep_theme_preprocess_node(array &$variables): void {
+  if (($variables['view_mode'] ?? '') !== 'teaser' || empty($variables['node']) || !$variables['node'] instanceof NodeInterface) {
+    return;
+  }
+
+  $node = $variables['node'];
+  $bundle = $node->bundle();
+
+  if ($bundle === 'news_item') {
+    $variables['gprep_item'] = gprep_theme_normalize_news_detail_node($node);
+  }
+  elseif (in_array($bundle, ['resource_item', 'enrolled_member', 'stakeholder_item', 'partner_municipality', 'faq_item'], TRUE)) {
+    $variables['gprep_item'] = gprep_theme_normalize_homepage_node($node);
+  }
+}
+
+/**
+ * Normalizes config-entered URLs.
+ */
+function gprep_theme_normalize_config_link(string $value): string {
+  $value = trim($value);
+  if ($value === '') {
+    return '';
+  }
+
+  if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://') || str_starts_with($value, '/')) {
+    return $value;
+  }
+
+  return '/' . ltrim($value, '/');
+}
+
+/**
+ * Parses a textarea of emergency links in "Title | Button | URL" format.
+ */
+function gprep_theme_parse_emergency_link_lines(string $value): array {
+  $items = [];
+
+  foreach (preg_split('/\r\n|\r|\n/', $value) as $line) {
+    $line = trim($line);
+    if ($line === '') {
+      continue;
+    }
+
+    $parts = array_map('trim', explode('|', $line));
+    $items[] = [
+      'title' => $parts[0] ?? '',
+      'button_text' => $parts[1] ?? 'Open',
+      'url' => gprep_theme_normalize_config_link($parts[2] ?? ''),
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Renders a Drupal view display when available.
+ */
+function gprep_theme_render_view(string $view_id, string $display_id): array {
+  $view = Views::getView($view_id);
+  if (!$view) {
+    return [];
+  }
+
+  return $view->buildRenderable($display_id, [], FALSE);
 }

@@ -1,0 +1,27 @@
+<div class="col-md-6 col-lg-4">
+  <div class="service-item wow fadeInUp" data-wow-delay=".25s">
+    <div class="service-img-wrap">
+      <div class="service-img">
+        {% if gprep_item.image_url %}
+          <img src="{{ gprep_item.image_url }}" alt="{{ gprep_item.title }}">
+        {% endif %}
+      </div>
+    </div>
+    <div class="service-content">
+      {% if gprep_item.icon_image_url %}
+        <div class="service-icon">
+          <img src="{{ gprep_item.icon_image_url }}" alt="{{ gprep_item.title }}">
+        </div>
+      {% endif %}
+      <h3 class="service-title">
+        <a href="{{ gprep_item.url }}">{{ gprep_item.title }}</a>
+      </h3>
+      {% if gprep_item.summary %}
+        <div class="service-text">{{ gprep_item.summary|raw }}</div>
+      {% endif %}
+      <div class="service-arrow">
+        <a href="{{ gprep_item.url }}" class="theme-btn">{{ gprep_item.button_text ?: 'Read More' }}<i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="accordion-item">
+  <h2 class="accordion-header" id="homepageFaqHeading{{ gprep_item.nid }}">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#homepageFaqCollapse{{ gprep_item.nid }}" aria-expanded="false" aria-controls="homepageFaqCollapse{{ gprep_item.nid }}">
+      <span><i class="far fa-question"></i></span> {{ gprep_item.title }}
+    </button>
+  </h2>
+  <div id="homepageFaqCollapse{{ gprep_item.nid }}" class="accordion-collapse collapse" aria-labelledby="homepageFaqHeading{{ gprep_item.nid }}" data-bs-parent="#homepageFaqAccordion">
+    <div class="accordion-body">{{ gprep_item.answer_body|raw }}</div>
+  </div>
+</div>

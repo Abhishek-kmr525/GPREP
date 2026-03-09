@@ -247,6 +247,16 @@
   background: #fff;
 }
 
+.emergencyResourcesSection .nav-tabs,
+.evacueeResourcesArea .nav-tabs {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.emergencyBoxDetails .btnPdf {
+  display: inline-block;
+}
+
 .footerEmergencyArea .footer-contact strong {
   color: var(--color-white);
 }
@@ -266,6 +276,30 @@
 }
 
 @media (max-width: 767px) {
+  .emergencySectionArea .braking-inner,
+  .emergencySectionArea .brack-text-rigt,
+  .emergencySectionArea .brack-text-rigt ul {
+    display: block;
+  }
+
+  .emergencySectionArea .gprep-emergency-marquee {
+    gap: 24px;
+  }
+
+  .emergencySectionArea .newsRightArea ul {
+    height: auto !important;
+    max-height: 460px;
+  }
+
+  .emergencyResourcesSection iframe {
+    height: 420px !important;
+  }
+
+  .emergencyResourcesSection .nav-link,
+  .evacueeResourcesArea .nav-link {
+    width: 100% !important;
+  }
+
   .gprep-partner-shell {
     padding: 0;
   }

@@ -8,3 +8,6 @@ libraries:
   - gprep_theme/global
 regions:
   content: Content
+  homepage_app_section: Homepage App Section
+  homepage_cta_section: Homepage CTA Section
+  homepage_who_is_gprep_section: Homepage Who Is GPREP Section

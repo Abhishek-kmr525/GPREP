@@ -1,0 +1,5 @@
+<a href="{{ gprep_item.partner_url ?: '#' }}"{% if gprep_item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
+  {% if gprep_item.image_url %}
+    <img src="{{ gprep_item.image_url }}" alt="{{ gprep_item.title }}">
+  {% endif %}
+</a>

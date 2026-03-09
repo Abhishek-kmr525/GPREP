@@ -23,6 +23,57 @@ gprep_site_settings.settings:
     emergency_phone_link:
       type: string
       label: 'Emergency phone link'
+    emergency_incident_title:
+      type: string
+      label: 'Incident title'
+    emergency_incident_body:
+      type: text
+      label: 'Incident body'
+    emergency_incident_button_text:
+      type: string
+      label: 'Incident button text'
+    emergency_incident_button_link:
+      type: string
+      label: 'Incident button link'
+    emergency_alert_intro:
+      type: text
+      label: 'Alert intro'
+    emergency_alert_feed_title:
+      type: string
+      label: 'Alert feed title'
+    emergency_alert_feed_message:
+      type: text
+      label: 'Alert feed message'
+    emergency_alert_type:
+      type: string
+      label: 'Alert type'
+    emergency_alert_area:
+      type: string
+      label: 'Alert area'
+    emergency_alert_datetime:
+      type: string
+      label: 'Alert datetime'
+    emergency_alert_instructions:
+      type: text
+      label: 'Alert instructions'
+    emergency_donations_heading:
+      type: string
+      label: 'Donations heading'
+    emergency_donations_items:
+      type: text
+      label: 'Donations items'
+    emergency_temporary_access_title:
+      type: string
+      label: 'Temporary access title'
+    emergency_temporary_access_body:
+      type: text
+      label: 'Temporary access body'
+    emergency_temporary_access_button_text:
+      type: string
+      label: 'Temporary access button text'
+    emergency_temporary_access_button_link:
+      type: string
+      label: 'Temporary access button link'
     facebook_url:
       type: string
       label: 'Facebook URL'

@@ -175,11 +175,16 @@
                   </div>
                 </div>
                 <div class="emergencyBoxDetails">
-                  <h1>{{ emergency_primary_update.title ?: 'Emergency details will appear here.' }}</h1>
-                  {% if emergency_primary_update.summary %}
+                  <h1>{{ emergency_page_settings.incident_title ?: emergency_primary_update.title ?: 'Emergency details will appear here.' }}</h1>
+                  {% if emergency_page_settings.incident_body %}
+                    <div>{{ emergency_page_settings.incident_body|raw }}</div>
+                  {% elseif emergency_primary_update.summary %}
                     <div>{{ emergency_primary_update.summary|raw }}</div>
                   {% else %}
                     <p>Emergency information will replace the regular homepage when emergency mode is enabled.</p>
+                  {% endif %}
+                  {% if emergency_page_settings.incident_button_text and emergency_page_settings.incident_button_link %}
+                    <a href="{{ emergency_page_settings.incident_button_link }}" class="btnPdf mt-3">{{ emergency_page_settings.incident_button_text }}</a>
                   {% endif %}
                 </div>
               </div>
@@ -227,17 +232,17 @@
               </nav>
               <div class="tab-content" id="emergency-nav-tabContent">
                 <div class="tab-pane fade show active" id="emergency-pane-1" role="tabpanel" aria-labelledby="emergency-tab-1">
-                  <p>This alert feed area is reserved for Alberta Emergency Alert integration and public instructions.</p>
+                  <p>{{ emergency_page_settings.alert_intro ?: 'This alert feed area is reserved for Alberta Emergency Alert integration and public instructions.' }}</p>
                   <div class="alert alert-warning mt-4">
-                    <strong>Emergency Alert Feed</strong><br>
-                    Connect the approved Alberta emergency alert source here in the next phase.
+                    <strong>{{ emergency_page_settings.alert_feed_title ?: 'Emergency Alert Feed' }}</strong><br>
+                    {{ emergency_page_settings.alert_feed_message ?: 'Connect the approved Alberta emergency alert source here in the next phase.' }}
                   </div>
                   <div class="alert alert-danger emergencyAlertDetail">
                     <h5 class="mb-2"><i class="fa-solid fa-light-emergency-on"></i> Active Emergency Alert</h5>
-                    <p><strong>Type:</strong> {{ emergency_primary_update.incident ?: 'Emergency Incident' }}</p>
-                    <p><strong>Affected Area:</strong> County of Grande Prairie</p>
-                    <p><strong>Date & Time:</strong> {{ emergency_primary_update.display_date_long ?: 'To be updated' }}{% if emergency_primary_update.display_time %} - {{ emergency_primary_update.display_time }}{% endif %}</p>
-                    <p><strong>Instructions:</strong> Follow official guidance and monitor the emergency updates panel for the latest information.</p>
+                    <p><strong>Type:</strong> {{ emergency_page_settings.alert_type ?: emergency_primary_update.incident ?: 'Emergency Incident' }}</p>
+                    <p><strong>Affected Area:</strong> {{ emergency_page_settings.alert_area ?: 'County of Grande Prairie' }}</p>
+                    <p><strong>Date & Time:</strong> {{ emergency_page_settings.alert_datetime ?: emergency_primary_update.display_date_long ?: 'To be updated' }}{% if not emergency_page_settings.alert_datetime and emergency_primary_update.display_time %} - {{ emergency_primary_update.display_time }}{% endif %}</p>
+                    <p><strong>Instructions:</strong> {{ emergency_page_settings.alert_instructions ?: 'Follow official guidance and monitor the emergency updates panel for the latest information.' }}</p>
                   </div>
                 </div>
 
@@ -295,30 +300,30 @@
 
                 <div class="tab-pane fade" id="emergency-pane-4" role="tabpanel" aria-labelledby="emergency-tab-4">
                   <div class="evacueeResourcesArea">
-                    <h6>Support Our Cause Through Your Generous Donations</h6>
+                    <h6>{{ emergency_page_settings.donations_heading ?: 'Support Our Cause Through Your Generous Donations' }}</h6>
                     <div class="donations-content">
                       <ul>
-                        <li class="align-items-center justify-content-between">
-                          <p>Northwestern Alberta Emergency Recovery Fund</p>
-                          <a href="#" class="btnPdf">Donation Link</a>
-                        </li>
-                        <li class="align-items-center justify-content-between">
-                          <p>Emergency support donations and recovery assistance</p>
-                          <a href="#" class="btnPdf">Click Here</a>
-                        </li>
+                        {% for item in emergency_page_settings.donation_items %}
+                          <li class="align-items-center justify-content-between">
+                            <p>{{ item.title }}</p>
+                            <a href="{{ item.url ?: '#' }}" class="btnPdf">{{ item.button_text ?: 'Open' }}</a>
+                          </li>
+                        {% endfor %}
                       </ul>
                     </div>
                   </div>
                 </div>
 
                 <div class="tab-pane fade" id="emergency-pane-5" role="tabpanel" aria-labelledby="emergency-tab-5">
-                  <h3 class="mb-3">{{ emergency_primary_update.title ?: 'Temporary access information' }}</h3>
-                  {% if emergency_primary_update.summary %}
+                  <h3 class="mb-3">{{ emergency_page_settings.temporary_access_title ?: emergency_primary_update.title ?: 'Temporary access information' }}</h3>
+                  {% if emergency_page_settings.temporary_access_body %}
+                    <div class="mb-3">{{ emergency_page_settings.temporary_access_body|raw }}</div>
+                  {% elseif emergency_primary_update.summary %}
                     <div class="mb-3">{{ emergency_primary_update.summary|raw }}</div>
                   {% else %}
                     <p class="mb-3">Temporary access instructions will appear here in the next phase.</p>
                   {% endif %}
-                  <a href="/contact" class="btnPdf">Contact GPREP</a>
+                  <a href="{{ emergency_page_settings.temporary_access_button_link ?: '/contact' }}" class="btnPdf">{{ emergency_page_settings.temporary_access_button_text ?: 'Contact GPREP' }}</a>
                 </div>
               </div>
             </div>
@@ -479,7 +484,7 @@
       </div>
     {% endif %}
 
-    {% if homepage_enrolled_members_section and homepage_enrolled_members %}
+    {% if homepage_enrolled_members_section and (homepage_enrolled_members_view or homepage_enrolled_members) %}
       <div class="enrolled-members-area pt-80 pb-80">
         <div class="container">
           <div class="row">
@@ -493,27 +498,30 @@
               </div>
             </div>
           </div>
-          <div class="row gprep-team-grid">
-            {% for item in homepage_enrolled_members %}
-              <div class="col-md-6 col-lg-3">
-                <div class="team-item mb-0" data-wow-delay=".25s">
-                  <div class="team-img">
-                    {% if item.image_url %}
-                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                    {% endif %}
-                  </div>
-                  <div class="team-content">
-                    <div class="team-bio">
-                      <h5>{{ item.title }}</h5>
-                      {% if item.person_role %}
-                        <span>{{ item.person_role }}</span>
+          {{ homepage_enrolled_members_view ?: '' }}
+          {% if not homepage_enrolled_members_view %}
+            <div class="row gprep-team-grid">
+              {% for item in homepage_enrolled_members %}
+                <div class="col-md-6 col-lg-3">
+                  <div class="team-item mb-0" data-wow-delay=".25s">
+                    <div class="team-img">
+                      {% if item.image_url %}
+                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
                       {% endif %}
+                    </div>
+                    <div class="team-content">
+                      <div class="team-bio">
+                        <h5>{{ item.title }}</h5>
+                        {% if item.person_role %}
+                          <span>{{ item.person_role }}</span>
+                        {% endif %}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            {% endfor %}
-          </div>
+              {% endfor %}
+            </div>
+          {% endif %}
           {% if homepage_enrolled_members_section.button_text and homepage_enrolled_members_section.button_link %}
             <div class="text-center mt-4">
               <a href="{{ homepage_enrolled_members_section.button_link }}" class="theme-btn theme-btn2">{{ homepage_enrolled_members_section.button_text }}<i class="fas fa-arrow-right"></i></a>
@@ -523,7 +531,7 @@
       </div>
     {% endif %}
 
-    {% if homepage_stakeholders_section and homepage_stakeholder_items %}
+    {% if homepage_stakeholders_section and (homepage_stakeholders_view or homepage_stakeholder_items) %}
       <div class="team-area pt-80 pb-40">
         <div class="container">
           <div class="row">
@@ -537,32 +545,35 @@
               </div>
             </div>
           </div>
-          <div class="row gprep-team-grid">
-            {% for item in homepage_stakeholder_items %}
-              <div class="col-md-6 col-lg-3">
-                <div class="team-item mb-0" data-wow-delay=".25s">
-                  <div class="team-img">
-                    {% if item.image_url %}
-                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                    {% endif %}
-                  </div>
-                  <div class="team-content">
-                    <div class="team-bio">
-                      <h5>{{ item.title }}</h5>
-                      {% if item.person_role %}
-                        <span>{{ item.person_role }}</span>
+          {{ homepage_stakeholders_view ?: '' }}
+          {% if not homepage_stakeholders_view %}
+            <div class="row gprep-team-grid">
+              {% for item in homepage_stakeholder_items %}
+                <div class="col-md-6 col-lg-3">
+                  <div class="team-item mb-0" data-wow-delay=".25s">
+                    <div class="team-img">
+                      {% if item.image_url %}
+                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
                       {% endif %}
+                    </div>
+                    <div class="team-content">
+                      <div class="team-bio">
+                        <h5>{{ item.title }}</h5>
+                        {% if item.person_role %}
+                          <span>{{ item.person_role }}</span>
+                        {% endif %}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            {% endfor %}
-          </div>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
       </div>
     {% endif %}
 
-    {% if homepage_partner_municipalities %}
+    {% if homepage_partner_municipalities_view or homepage_partner_municipalities %}
       <div class="partner-area pt-50 pb-50">
         <div class="container">
           <div class="gprep-partner-shell">
@@ -574,19 +585,22 @@
                 </div>
               </div>
             </div>
-            <div class="partner-wrapper gprep-partner-grid">
-              {% for item in homepage_partner_municipalities %}
-                <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
-                  <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                </a>
-              {% endfor %}
-            </div>
+            {{ homepage_partner_municipalities_view ?: '' }}
+            {% if not homepage_partner_municipalities_view %}
+              <div class="partner-wrapper gprep-partner-grid">
+                {% for item in homepage_partner_municipalities %}
+                  <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                  </a>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
         </div>
       </div>
     {% endif %}
 
-    {% if homepage_resource_items %}
+    {% if homepage_resources_view or homepage_resource_items %}
       <div class="service-area bg pt-80 pb-80">
         <div class="container">
           <div class="row">
@@ -597,47 +611,50 @@
               </div>
             </div>
           </div>
-          <div class="row">
-            {% for item in homepage_resource_items %}
-              <div class="col-md-6 col-lg-4">
-                <div class="service-item wow fadeInUp" data-wow-delay=".25s">
-                  <div class="service-img-wrap">
-                    <div class="service-img">
-                      {% if item.image_url %}
-                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                      {% endif %}
-                    </div>
-                  </div>
-                  <div class="service-content">
-                    {% if item.icon_image_url %}
-                      <div class="service-icon">
-                        <img src="{{ item.icon_image_url }}" alt="{{ item.title }}">
+          {{ homepage_resources_view ?: '' }}
+          {% if not homepage_resources_view %}
+            <div class="row">
+              {% for item in homepage_resource_items %}
+                <div class="col-md-6 col-lg-4">
+                  <div class="service-item wow fadeInUp" data-wow-delay=".25s">
+                    <div class="service-img-wrap">
+                      <div class="service-img">
+                        {% if item.image_url %}
+                          <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                        {% endif %}
                       </div>
-                    {% endif %}
-                    <h3 class="service-title">
-                      <a href="{{ item.url }}">{{ item.title }}</a>
-                    </h3>
-                    {% if item.summary %}
-                      <div class="service-text">{{ item.summary|raw }}</div>
-                    {% endif %}
-                    <div class="service-arrow">
-                      <a href="{{ item.url }}" class="theme-btn">{{ item.button_text ?: 'Read More' }}<i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="service-content">
+                      {% if item.icon_image_url %}
+                        <div class="service-icon">
+                          <img src="{{ item.icon_image_url }}" alt="{{ item.title }}">
+                        </div>
+                      {% endif %}
+                      <h3 class="service-title">
+                        <a href="{{ item.url }}">{{ item.title }}</a>
+                      </h3>
+                      {% if item.summary %}
+                        <div class="service-text">{{ item.summary|raw }}</div>
+                      {% endif %}
+                      <div class="service-arrow">
+                        <a href="{{ item.url }}" class="theme-btn">{{ item.button_text ?: 'Read More' }}<i class="fas fa-arrow-right"></i></a>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            {% endfor %}
-            {% if homepage_resources_section.button_text and homepage_resources_section.button_link %}
-              <div class="text-center">
-                <a href="{{ homepage_resources_section.button_link }}" class="theme-btn mt-4">{{ homepage_resources_section.button_text }}<i class="fas fa-arrow-right"></i></a>
-              </div>
-            {% endif %}
-          </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% if homepage_resources_section.button_text and homepage_resources_section.button_link %}
+            <div class="text-center">
+              <a href="{{ homepage_resources_section.button_link }}" class="theme-btn mt-4">{{ homepage_resources_section.button_text }}<i class="fas fa-arrow-right"></i></a>
+            </div>
+          {% endif %}
         </div>
       </div>
     {% endif %}
 
-    {% if homepage_faq_section and homepage_faq_items %}
+    {% if homepage_faq_section and (homepage_faq_view or homepage_faq_items) %}
       <div class="faq-area homeFaqArea py-120">
         <div class="container">
           <div class="row">
@@ -661,26 +678,32 @@
               {% if homepage_faq_section.secondary_heading %}
                 <h3 class="mb-4">{{ homepage_faq_section.secondary_heading }}</h3>
               {% endif %}
-              <div class="accordion" id="homepageFaqAccordion">
-                {% for item in homepage_faq_items %}
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="homepageFaqHeading{{ loop.index }}">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#homepageFaqCollapse{{ loop.index }}" aria-expanded="false" aria-controls="homepageFaqCollapse{{ loop.index }}">
-                        <span><i class="far fa-question"></i></span> {{ item.title }}
-                      </button>
-                    </h2>
-                    <div id="homepageFaqCollapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="homepageFaqHeading{{ loop.index }}" data-bs-parent="#homepageFaqAccordion">
-                      <div class="accordion-body">{{ item.answer_body|raw }}</div>
+              {{ homepage_faq_view ?: '' }}
+              {% if not homepage_faq_view %}
+                <div class="accordion" id="homepageFaqAccordion">
+                  {% for item in homepage_faq_items %}
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="homepageFaqHeading{{ loop.index }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#homepageFaqCollapse{{ loop.index }}" aria-expanded="false" aria-controls="homepageFaqCollapse{{ loop.index }}">
+                          <span><i class="far fa-question"></i></span> {{ item.title }}
+                        </button>
+                      </h2>
+                      <div id="homepageFaqCollapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="homepageFaqHeading{{ loop.index }}" data-bs-parent="#homepageFaqAccordion">
+                        <div class="accordion-body">{{ item.answer_body|raw }}</div>
+                      </div>
                     </div>
-                  </div>
-                {% endfor %}
-              </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
             </div>
           </div>
         </div>
       </div>
     {% endif %}
 
+    {% if page.homepage_app_section %}
+      {{ page.homepage_app_section }}
+    {% else %}
     <div class="feature-area feature-bg py-120">
       <div class="container">
         <div class="feature-wrapper mt-5">
@@ -739,8 +762,9 @@
         </div>
       </div>
     </div>
+    {% endif %}
 
-    {% if homepage_news_section and homepage_news_items %}
+    {% if homepage_news_section and (homepage_news_view or homepage_news_items) %}
       <div class="campaign-area bg py-120">
         <div class="container">
           <div class="row">
@@ -751,37 +775,43 @@
               </div>
             </div>
           </div>
-          <div class="row">
-            {% for item in homepage_news_items %}
-              <div class="col-md-6 col-lg-4">
-                <div class="campaign-item wow fadeInUp" data-wow-delay=".25s">
-                  <div class="campaign-date">
-                    <span class="campaign-date-day">{{ item.date_day }}</span><span class="campaign-date-month">{{ item.date_month }}</span>
-                  </div>
-                  <div class="campaign-img">
-                    {% if item.image_url %}
-                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                    {% endif %}
-                  </div>
-                  <div class="campaign-content">
-                    <h4 class="campaign-title">
-                      <a href="{{ item.button_link ?: item.url }}">{{ item.title }}</a>
-                    </h4>
-                    {% if item.summary %}
-                      <div class="campaign-text">{{ item.summary|raw }}</div>
-                    {% endif %}
-                    <div class="campaign-footer mt-4">
-                      <a href="{{ item.button_link ?: item.url }}" class="theme-btn">{{ item.button_text ?: 'Read More' }}<i class="fas fa-arrow-right"></i></a>
+          {{ homepage_news_view ?: '' }}
+          {% if not homepage_news_view %}
+            <div class="row">
+              {% for item in homepage_news_items %}
+                <div class="col-md-6 col-lg-4">
+                  <div class="campaign-item wow fadeInUp" data-wow-delay=".25s">
+                    <div class="campaign-date">
+                      <span class="campaign-date-day">{{ item.date_day }}</span><span class="campaign-date-month">{{ item.date_month }}</span>
+                    </div>
+                    <div class="campaign-img">
+                      {% if item.image_url %}
+                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                      {% endif %}
+                    </div>
+                    <div class="campaign-content">
+                      <h4 class="campaign-title">
+                        <a href="{{ item.button_link ?: item.url }}">{{ item.title }}</a>
+                      </h4>
+                      {% if item.summary %}
+                        <div class="campaign-text">{{ item.summary|raw }}</div>
+                      {% endif %}
+                      <div class="campaign-footer mt-4">
+                        <a href="{{ item.button_link ?: item.url }}" class="theme-btn">{{ item.button_text ?: 'Read More' }}<i class="fas fa-arrow-right"></i></a>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            {% endfor %}
-          </div>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
       </div>
     {% endif %}
 
+    {% if page.homepage_cta_section %}
+      {{ page.homepage_cta_section }}
+    {% else %}
     <div class="cta-area mt-0">
       <div class="cta-wrapper" style="background-image: url('{{ theme_path }}/assets/img/cta/01.jpg');">
         <div class="container">
@@ -806,7 +836,11 @@
         </div>
       </div>
     </div>
+    {% endif %}
 
+    {% if page.homepage_who_is_gprep_section %}
+      {{ page.homepage_who_is_gprep_section }}
+    {% else %}
     <section class="section-lg our-security-section_two">
       <div class="container pbmit-col-stretched-yes pbmit-col-right">
         <div class="row g-0">
@@ -853,6 +887,7 @@
         </div>
       </div>
     </section>
+    {% endif %}
   {% elseif is_about_page %}
     <div class="site-breadcrumb" style="background: url('{{ theme_path }}/assets/img/breadcrumb/01.jpg')">
       <div class="container">
@@ -919,7 +954,7 @@
       </div>
     </div>
 
-    {% if about_page_partner_municipalities %}
+    {% if about_page_partner_municipalities_view or about_page_partner_municipalities %}
       <div class="partner-area bg pt-50 pb-50">
         <div class="container">
           <div class="gprep-partner-shell">
@@ -931,13 +966,16 @@
                 </div>
               </div>
             </div>
-            <div class="partner-wrapper gprep-partner-grid">
-              {% for item in about_page_partner_municipalities %}
-                <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
-                  <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                </a>
-              {% endfor %}
-            </div>
+            {{ about_page_partner_municipalities_view ?: '' }}
+            {% if not about_page_partner_municipalities_view %}
+              <div class="partner-wrapper gprep-partner-grid">
+                {% for item in about_page_partner_municipalities %}
+                  <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                  </a>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
         </div>
       </div>

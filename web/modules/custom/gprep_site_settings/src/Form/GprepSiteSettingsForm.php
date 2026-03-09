@@ -72,6 +72,101 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Emergency phone link value'),
       '#default_value' => $config->get('emergency_phone_link'),
     ];
+    $form['emergency']['emergency_incident_title'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Incident title'),
+      '#default_value' => $config->get('emergency_incident_title'),
+    ];
+    $form['emergency']['emergency_incident_body'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Incident summary'),
+      '#description' => $this->t('Shown in the main incident details panel on the emergency homepage.'),
+      '#default_value' => $config->get('emergency_incident_body'),
+      '#rows' => 4,
+    ];
+    $form['emergency']['emergency_incident_button_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Incident button text'),
+      '#default_value' => $config->get('emergency_incident_button_text'),
+    ];
+    $form['emergency']['emergency_incident_button_link'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Incident button URL'),
+      '#description' => $this->t('Use an internal path like /news or a full external URL.'),
+      '#default_value' => $config->get('emergency_incident_button_link'),
+    ];
+    $form['emergency']['emergency_alert_intro'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Alert intro text'),
+      '#default_value' => $config->get('emergency_alert_intro'),
+      '#rows' => 3,
+    ];
+    $form['emergency']['emergency_alert_feed_title'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Alert feed box title'),
+      '#default_value' => $config->get('emergency_alert_feed_title'),
+    ];
+    $form['emergency']['emergency_alert_feed_message'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Alert feed box message'),
+      '#default_value' => $config->get('emergency_alert_feed_message'),
+      '#rows' => 2,
+    ];
+    $form['emergency']['emergency_alert_type'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Active alert type'),
+      '#default_value' => $config->get('emergency_alert_type'),
+    ];
+    $form['emergency']['emergency_alert_area'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Active alert affected area'),
+      '#default_value' => $config->get('emergency_alert_area'),
+    ];
+    $form['emergency']['emergency_alert_datetime'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Active alert date and time'),
+      '#default_value' => $config->get('emergency_alert_datetime'),
+    ];
+    $form['emergency']['emergency_alert_instructions'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Active alert instructions'),
+      '#default_value' => $config->get('emergency_alert_instructions'),
+      '#rows' => 3,
+    ];
+    $form['emergency']['emergency_donations_heading'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Donations heading'),
+      '#default_value' => $config->get('emergency_donations_heading'),
+    ];
+    $form['emergency']['emergency_donations_items'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Donations list'),
+      '#description' => $this->t('One item per line using the format: Title | Button label | URL'),
+      '#default_value' => $config->get('emergency_donations_items'),
+      '#rows' => 6,
+    ];
+    $form['emergency']['emergency_temporary_access_title'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Temporary access title'),
+      '#default_value' => $config->get('emergency_temporary_access_title'),
+    ];
+    $form['emergency']['emergency_temporary_access_body'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Temporary access body'),
+      '#default_value' => $config->get('emergency_temporary_access_body'),
+      '#rows' => 4,
+    ];
+    $form['emergency']['emergency_temporary_access_button_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Temporary access button text'),
+      '#default_value' => $config->get('emergency_temporary_access_button_text'),
+    ];
+    $form['emergency']['emergency_temporary_access_button_link'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Temporary access button URL'),
+      '#description' => $this->t('Use an internal path like /contact or a full external URL.'),
+      '#default_value' => $config->get('emergency_temporary_access_button_link'),
+    ];
 
     $form['social'] = [
       '#type' => 'details',
@@ -129,6 +224,23 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       ->set('emergency_label', $form_state->getValue('emergency_label'))
       ->set('emergency_phone', $form_state->getValue('emergency_phone'))
       ->set('emergency_phone_link', $form_state->getValue('emergency_phone_link'))
+      ->set('emergency_incident_title', $form_state->getValue('emergency_incident_title'))
+      ->set('emergency_incident_body', $form_state->getValue('emergency_incident_body'))
+      ->set('emergency_incident_button_text', $form_state->getValue('emergency_incident_button_text'))
+      ->set('emergency_incident_button_link', $form_state->getValue('emergency_incident_button_link'))
+      ->set('emergency_alert_intro', $form_state->getValue('emergency_alert_intro'))
+      ->set('emergency_alert_feed_title', $form_state->getValue('emergency_alert_feed_title'))
+      ->set('emergency_alert_feed_message', $form_state->getValue('emergency_alert_feed_message'))
+      ->set('emergency_alert_type', $form_state->getValue('emergency_alert_type'))
+      ->set('emergency_alert_area', $form_state->getValue('emergency_alert_area'))
+      ->set('emergency_alert_datetime', $form_state->getValue('emergency_alert_datetime'))
+      ->set('emergency_alert_instructions', $form_state->getValue('emergency_alert_instructions'))
+      ->set('emergency_donations_heading', $form_state->getValue('emergency_donations_heading'))
+      ->set('emergency_donations_items', $form_state->getValue('emergency_donations_items'))
+      ->set('emergency_temporary_access_title', $form_state->getValue('emergency_temporary_access_title'))
+      ->set('emergency_temporary_access_body', $form_state->getValue('emergency_temporary_access_body'))
+      ->set('emergency_temporary_access_button_text', $form_state->getValue('emergency_temporary_access_button_text'))
+      ->set('emergency_temporary_access_button_link', $form_state->getValue('emergency_temporary_access_button_link'))
       ->set('facebook_url', $form_state->getValue('facebook_url'))
       ->set('twitter_url', $form_state->getValue('twitter_url'))
       ->set('footer_copyright', $form_state->getValue('footer_copyright'))
