@@ -1,0 +1,4 @@
+editorial-dashboard:
+  css:
+    theme:
+      css/editorial-dashboard.css: {}

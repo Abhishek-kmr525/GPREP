@@ -1,0 +1,18 @@
+gprep_homepage_manager.editorial_dashboard:
+  path: '/admin/gprep/editorial'
+  defaults:
+    _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::build'
+    _title: 'GPREP Editorial'
+  requirements:
+    _permission: 'access content overview'
+  options:
+    _admin_route: true
+
+gprep_homepage_manager.news_admin:
+  path: '/admin/gprep/news'
+  defaults:
+    _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::newsRedirect'
+  requirements:
+    _permission: 'access content overview'
+  options:
+    _admin_route: true

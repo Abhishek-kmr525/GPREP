@@ -1,0 +1,92 @@
+gprep_homepage_manager.editorial_dashboard:
+  title: 'GPREP'
+  description: 'Open the GPREP editorial dashboard.'
+  route_name: gprep_homepage_manager.editorial_dashboard
+  parent: system.admin
+  weight: -5
+
+gprep_homepage_manager.news_group:
+  title: 'News'
+  description: 'Manage news content.'
+  route_name: gprep_homepage_manager.news_admin
+  parent: system.admin_content
+  weight: -10
+
+gprep_homepage_manager.news_list:
+  title: 'All News'
+  description: 'View all news items.'
+  route_name: gprep_homepage_manager.news_admin
+  parent: gprep_homepage_manager.news_group
+  weight: 0
+
+gprep_homepage_manager.add_news_item:
+  title: 'Add News'
+  description: 'Add a news item.'
+  route_name: node.add
+  route_parameters:
+    node_type: news_item
+  parent: gprep_homepage_manager.news_group
+  weight: 0
+
+gprep_homepage_manager.add_faq_item:
+  title: 'FAQ'
+  description: 'Add an FAQ item.'
+  route_name: node.add
+  route_parameters:
+    node_type: faq_item
+  parent: node.add_page
+  weight: 1
+
+gprep_homepage_manager.add_resource_item:
+  title: 'Resource'
+  description: 'Add a resource item.'
+  route_name: node.add
+  route_parameters:
+    node_type: resource_item
+  parent: node.add_page
+  weight: 2
+
+gprep_homepage_manager.add_enrolled_member:
+  title: 'Enrolled Member'
+  description: 'Add an enrolled member.'
+  route_name: node.add
+  route_parameters:
+    node_type: enrolled_member
+  parent: node.add_page
+  weight: 3
+
+gprep_homepage_manager.add_stakeholder_item:
+  title: 'Stakeholder'
+  description: 'Add a stakeholder item.'
+  route_name: node.add
+  route_parameters:
+    node_type: stakeholder_item
+  parent: node.add_page
+  weight: 4
+
+gprep_homepage_manager.add_incident_type:
+  title: 'Incident Type'
+  description: 'Add an incident type.'
+  route_name: node.add
+  route_parameters:
+    node_type: incident_type
+  parent: node.add_page
+  weight: 5
+
+gprep_homepage_manager.add_hero_slide:
+  title: 'Hero Slide'
+  description: 'Add a homepage hero slide.'
+  route_name: node.add
+  route_parameters:
+    node_type: hero_slide
+  parent: node.add_page
+  weight: 6
+
+gprep_homepage_manager.add_emergency_banner_item:
+  title: 'Emergency Banner'
+  description: 'Add an emergency banner item.'
+  route_name: node.add
+  route_parameters:
+    node_type: emergency_banner_item
+  parent: node.add_page
+  weight: 7
