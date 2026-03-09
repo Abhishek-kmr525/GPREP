@@ -484,7 +484,7 @@
       </div>
     {% endif %}
 
-    {% if homepage_enrolled_members_section and (homepage_enrolled_members_view or homepage_enrolled_members) %}
+    {% if homepage_enrolled_members_section and homepage_enrolled_members %}
       <div class="enrolled-members-area pt-80 pb-80">
         <div class="container">
           <div class="row">
@@ -498,30 +498,27 @@
               </div>
             </div>
           </div>
-          {{ homepage_enrolled_members_view ?: '' }}
-          {% if not homepage_enrolled_members_view %}
-            <div class="row gprep-team-grid">
-              {% for item in homepage_enrolled_members %}
-                <div class="col-md-6 col-lg-3">
-                  <div class="team-item mb-0" data-wow-delay=".25s">
-                    <div class="team-img">
-                      {% if item.image_url %}
-                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
+          <div class="row gprep-team-grid">
+            {% for item in homepage_enrolled_members %}
+              <div class="col-md-6 col-lg-3">
+                <div class="team-item mb-0" data-wow-delay=".25s">
+                  <div class="team-img">
+                    {% if item.image_url %}
+                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    {% endif %}
+                  </div>
+                  <div class="team-content">
+                    <div class="team-bio">
+                      <h5>{{ item.title }}</h5>
+                      {% if item.person_role %}
+                        <span>{{ item.person_role }}</span>
                       {% endif %}
-                    </div>
-                    <div class="team-content">
-                      <div class="team-bio">
-                        <h5>{{ item.title }}</h5>
-                        {% if item.person_role %}
-                          <span>{{ item.person_role }}</span>
-                        {% endif %}
-                      </div>
                     </div>
                   </div>
                 </div>
-              {% endfor %}
-            </div>
-          {% endif %}
+              </div>
+            {% endfor %}
+          </div>
           {% if homepage_enrolled_members_section.button_text and homepage_enrolled_members_section.button_link %}
             <div class="text-center mt-4">
               <a href="{{ homepage_enrolled_members_section.button_link }}" class="theme-btn theme-btn2">{{ homepage_enrolled_members_section.button_text }}<i class="fas fa-arrow-right"></i></a>
@@ -531,7 +528,7 @@
       </div>
     {% endif %}
 
-    {% if homepage_stakeholders_section and (homepage_stakeholders_view or homepage_stakeholder_items) %}
+    {% if homepage_stakeholders_section and homepage_stakeholder_items %}
       <div class="team-area pt-80 pb-40">
         <div class="container">
           <div class="row">
@@ -545,35 +542,32 @@
               </div>
             </div>
           </div>
-          {{ homepage_stakeholders_view ?: '' }}
-          {% if not homepage_stakeholders_view %}
-            <div class="row gprep-team-grid">
-              {% for item in homepage_stakeholder_items %}
-                <div class="col-md-6 col-lg-3">
-                  <div class="team-item mb-0" data-wow-delay=".25s">
-                    <div class="team-img">
-                      {% if item.image_url %}
-                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
+          <div class="row gprep-team-grid">
+            {% for item in homepage_stakeholder_items %}
+              <div class="col-md-6 col-lg-3">
+                <div class="team-item mb-0" data-wow-delay=".25s">
+                  <div class="team-img">
+                    {% if item.image_url %}
+                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    {% endif %}
+                  </div>
+                  <div class="team-content">
+                    <div class="team-bio">
+                      <h5>{{ item.title }}</h5>
+                      {% if item.person_role %}
+                        <span>{{ item.person_role }}</span>
                       {% endif %}
-                    </div>
-                    <div class="team-content">
-                      <div class="team-bio">
-                        <h5>{{ item.title }}</h5>
-                        {% if item.person_role %}
-                          <span>{{ item.person_role }}</span>
-                        {% endif %}
-                      </div>
                     </div>
                   </div>
                 </div>
-              {% endfor %}
-            </div>
-          {% endif %}
+              </div>
+            {% endfor %}
+          </div>
         </div>
       </div>
     {% endif %}
 
-    {% if homepage_partner_municipalities_view or homepage_partner_municipalities %}
+    {% if homepage_partner_section and homepage_partner_municipalities %}
       <div class="partner-area pt-50 pb-50">
         <div class="container">
           <div class="gprep-partner-shell">
@@ -585,22 +579,19 @@
                 </div>
               </div>
             </div>
-            {{ homepage_partner_municipalities_view ?: '' }}
-            {% if not homepage_partner_municipalities_view %}
-              <div class="partner-wrapper gprep-partner-grid">
-                {% for item in homepage_partner_municipalities %}
-                  <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
-                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                  </a>
-                {% endfor %}
-              </div>
-            {% endif %}
+            <div class="partner-wrapper gprep-partner-grid">
+              {% for item in homepage_partner_municipalities %}
+                <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                  <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                </a>
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>
     {% endif %}
 
-    {% if homepage_resources_view or homepage_resource_items %}
+    {% if homepage_resources_section and homepage_resource_items %}
       <div class="service-area bg pt-80 pb-80">
         <div class="container">
           <div class="row">
@@ -611,40 +602,37 @@
               </div>
             </div>
           </div>
-          {{ homepage_resources_view ?: '' }}
-          {% if not homepage_resources_view %}
-            <div class="row">
-              {% for item in homepage_resource_items %}
-                <div class="col-md-6 col-lg-4">
-                  <div class="service-item wow fadeInUp" data-wow-delay=".25s">
-                    <div class="service-img-wrap">
-                      <div class="service-img">
-                        {% if item.image_url %}
-                          <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                        {% endif %}
-                      </div>
+          <div class="row">
+            {% for item in homepage_resource_items %}
+              <div class="col-md-6 col-lg-4">
+                <div class="service-item wow fadeInUp" data-wow-delay=".25s">
+                  <div class="service-img-wrap">
+                    <div class="service-img">
+                      {% if item.image_url %}
+                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                      {% endif %}
                     </div>
-                    <div class="service-content">
-                      {% if item.icon_image_url %}
-                        <div class="service-icon">
-                          <img src="{{ item.icon_image_url }}" alt="{{ item.title }}">
-                        </div>
-                      {% endif %}
-                      <h3 class="service-title">
-                        <a href="{{ item.url }}">{{ item.title }}</a>
-                      </h3>
-                      {% if item.summary %}
-                        <div class="service-text">{{ item.summary|raw }}</div>
-                      {% endif %}
-                      <div class="service-arrow">
-                        <a href="{{ item.url }}" class="theme-btn">{{ item.button_text ?: 'Read More' }}<i class="fas fa-arrow-right"></i></a>
+                  </div>
+                  <div class="service-content">
+                    {% if item.icon_image_url %}
+                      <div class="service-icon">
+                        <img src="{{ item.icon_image_url }}" alt="{{ item.title }}">
                       </div>
+                    {% endif %}
+                    <h3 class="service-title">
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                    </h3>
+                    {% if item.summary %}
+                      <div class="service-text">{{ item.summary|raw }}</div>
+                    {% endif %}
+                    <div class="service-arrow">
+                      <a href="{{ item.url }}" class="theme-btn">{{ item.button_text ?: 'Read More' }}<i class="fas fa-arrow-right"></i></a>
                     </div>
                   </div>
                 </div>
-              {% endfor %}
-            </div>
-          {% endif %}
+              </div>
+            {% endfor %}
+          </div>
           {% if homepage_resources_section.button_text and homepage_resources_section.button_link %}
             <div class="text-center">
               <a href="{{ homepage_resources_section.button_link }}" class="theme-btn mt-4">{{ homepage_resources_section.button_text }}<i class="fas fa-arrow-right"></i></a>
@@ -654,7 +642,7 @@
       </div>
     {% endif %}
 
-    {% if homepage_faq_section and (homepage_faq_view or homepage_faq_items) %}
+    {% if homepage_faq_section and homepage_faq_items %}
       <div class="faq-area homeFaqArea py-120">
         <div class="container">
           <div class="row">
@@ -678,93 +666,29 @@
               {% if homepage_faq_section.secondary_heading %}
                 <h3 class="mb-4">{{ homepage_faq_section.secondary_heading }}</h3>
               {% endif %}
-              {{ homepage_faq_view ?: '' }}
-              {% if not homepage_faq_view %}
-                <div class="accordion" id="homepageFaqAccordion">
-                  {% for item in homepage_faq_items %}
-                    <div class="accordion-item">
-                      <h2 class="accordion-header" id="homepageFaqHeading{{ loop.index }}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#homepageFaqCollapse{{ loop.index }}" aria-expanded="false" aria-controls="homepageFaqCollapse{{ loop.index }}">
-                          <span><i class="far fa-question"></i></span> {{ item.title }}
-                        </button>
-                      </h2>
-                      <div id="homepageFaqCollapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="homepageFaqHeading{{ loop.index }}" data-bs-parent="#homepageFaqAccordion">
-                        <div class="accordion-body">{{ item.answer_body|raw }}</div>
-                      </div>
+              <div class="accordion" id="homepageFaqAccordion">
+                {% for item in homepage_faq_items %}
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="homepageFaqHeading{{ loop.index }}">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#homepageFaqCollapse{{ loop.index }}" aria-expanded="false" aria-controls="homepageFaqCollapse{{ loop.index }}">
+                        <span><i class="far fa-question"></i></span> {{ item.title }}
+                      </button>
+                    </h2>
+                    <div id="homepageFaqCollapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="homepageFaqHeading{{ loop.index }}" data-bs-parent="#homepageFaqAccordion">
+                      <div class="accordion-body">{{ item.answer_body|raw }}</div>
                     </div>
-                  {% endfor %}
-                </div>
-              {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
             </div>
           </div>
         </div>
       </div>
     {% endif %}
 
-    {% if page.homepage_app_section %}
-      {{ page.homepage_app_section }}
-    {% else %}
-    <div class="feature-area feature-bg py-120">
-      <div class="container">
-        <div class="feature-wrapper mt-5">
-          <div class="row">
-            <div class="col-md-6 col-lg-3">
-              <div class="feature-item wow fadeInUp p-3 mb-3" data-wow-delay=".25s">
-                <h4 class="feature-title mb-0">Be Prepared</h4>
-                <p class="mb-2"><strong>Alberta</strong></p>
-                <div class="text-center">
-                  <a href="https://www.alberta.ca/emergency-preparedness?utm_source=redirect&amp;utm_medium=poster&amp;utm_campaign=GoA&amp;utm_term=BePrepared" target="_blank" rel="noopener noreferrer" class="theme-btn mt-0 py-2 rounded-5">Read More<i class="fas fa-arrow-right"></i></a>
-                </div>
-              </div>
-              <div class="feature-item wow fadeInDown p-3" data-wow-delay=".25s">
-                <h4 class="feature-title mb-0">Get Prepared</h4>
-                <p class="mb-2"><strong>Canada</strong></p>
-                <div class="text-center">
-                  <a href="https://www.canada.ca/en/services/policing/emergencies/preparedness/get-prepared.html" target="_blank" rel="noopener noreferrer" class="theme-btn py-2 rounded-5">Read More<i class="fas fa-arrow-right"></i></a>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-              <div class="feature-item wow fadeInDown px-3" data-wow-delay=".25s">
-                <div class="feature-icon">
-                  <img src="{{ theme_path }}/assets/img/icon/ab_icon.png" alt="AB Wildfire Status">
-                </div>
-                <h4 class="feature-title mb-0">AB Wildfire Status</h4>
-                <p class="mb-2"><strong>APP</strong></p>
-                <p>Download the app</p>
-                <div class="text-center">
-                  <a href="https://play.google.com/store/apps/details?id=com.ab.wildfire" target="_blank" rel="noopener noreferrer" class="theme-btn mt-3 py-2" style="background: #000; width: 100%;"><img src="{{ theme_path }}/assets/img/icon/google_play_store.png" style="width: 18px; margin-right: 5px;" alt=""> Google Play Store</a>
-                  <a href="https://apps.apple.com/ca/app/ab-wildfire-status/id1554525514" target="_blank" rel="noopener noreferrer" class="theme-btn py-2" style="background: #000; width: 100%;"><img src="{{ theme_path }}/assets/img/icon/apple_play_store.png" style="width: 18px; margin-right: 5px;" alt=""> Apple App Store</a>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-6">
-              <div class="feature-item wow fadeInUp" data-wow-delay=".25s">
-                <div class="feature-icon">
-                  <img src="{{ theme_path }}/assets/img/icon/ae_icon.png" alt="Alberta Emergency Alert">
-                </div>
-                <div class="d-block d-md-flex gap-4 align-items-center">
-                  <div class="col-5 p-0">
-                    <img src="{{ theme_path }}/assets/img/02.jpg" style="width: 100%;" alt="Alberta Emergency Alert">
-                  </div>
-                  <div class="col text-start">
-                    <h4 class="feature-title">Alberta Emergency Alert</h4>
-                    <p>Visit the <strong>Alberta Emergency Alert website</strong> for more information, or to <strong>download the app.</strong></p>
-                  </div>
-                </div>
-                <div>
-                  <a href="https://play.google.com/store/apps/details?id=ca.ab.gov.aea" target="_blank" rel="noopener noreferrer" class="theme-btn mt-3 py-2" style="background: #000;"><img src="{{ theme_path }}/assets/img/icon/google_play_store.png" style="width: 18px; margin-right: 5px;" alt=""> Google Play Store</a>
-                  <a href="https://apps.apple.com/ca/app/alberta-emergency-alert/id887604348" target="_blank" rel="noopener noreferrer" class="theme-btn py-2" style="background: #000;"><img src="{{ theme_path }}/assets/img/icon/apple_play_store.png" style="width: 18px; margin-right: 5px;" alt=""> Apple App Store</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endif %}
+    {{ page.homepage_app_section }}
 
-    {% if homepage_news_section and (homepage_news_view or homepage_news_items) %}
+    {% if homepage_news_section and homepage_news_items %}
       <div class="campaign-area bg py-120">
         <div class="container">
           <div class="row">
@@ -775,119 +699,40 @@
               </div>
             </div>
           </div>
-          {{ homepage_news_view ?: '' }}
-          {% if not homepage_news_view %}
-            <div class="row">
-              {% for item in homepage_news_items %}
-                <div class="col-md-6 col-lg-4">
-                  <div class="campaign-item wow fadeInUp" data-wow-delay=".25s">
-                    <div class="campaign-date">
-                      <span class="campaign-date-day">{{ item.date_day }}</span><span class="campaign-date-month">{{ item.date_month }}</span>
-                    </div>
-                    <div class="campaign-img">
-                      {% if item.image_url %}
-                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                      {% endif %}
-                    </div>
-                    <div class="campaign-content">
-                      <h4 class="campaign-title">
-                        <a href="{{ item.button_link ?: item.url }}">{{ item.title }}</a>
-                      </h4>
-                      {% if item.summary %}
-                        <div class="campaign-text">{{ item.summary|raw }}</div>
-                      {% endif %}
-                      <div class="campaign-footer mt-4">
-                        <a href="{{ item.button_link ?: item.url }}" class="theme-btn">{{ item.button_text ?: 'Read More' }}<i class="fas fa-arrow-right"></i></a>
-                      </div>
+          <div class="row">
+            {% for item in homepage_news_items %}
+              <div class="col-md-6 col-lg-4">
+                <div class="campaign-item wow fadeInUp" data-wow-delay=".25s">
+                  <div class="campaign-date">
+                    <span class="campaign-date-day">{{ item.date_day }}</span><span class="campaign-date-month">{{ item.date_month }}</span>
+                  </div>
+                  <div class="campaign-img">
+                    {% if item.image_url %}
+                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    {% endif %}
+                  </div>
+                  <div class="campaign-content">
+                    <h4 class="campaign-title">
+                      <a href="{{ item.button_link ?: item.url }}">{{ item.title }}</a>
+                    </h4>
+                    {% if item.summary %}
+                      <div class="campaign-text">{{ item.summary|raw }}</div>
+                    {% endif %}
+                    <div class="campaign-footer mt-4">
+                      <a href="{{ item.button_link ?: item.url }}" class="theme-btn">{{ item.button_text ?: 'Read More' }}<i class="fas fa-arrow-right"></i></a>
                     </div>
                   </div>
                 </div>
-              {% endfor %}
-            </div>
-          {% endif %}
+              </div>
+            {% endfor %}
+          </div>
         </div>
       </div>
     {% endif %}
 
-    {% if page.homepage_cta_section %}
-      {{ page.homepage_cta_section }}
-    {% else %}
-    <div class="cta-area mt-0">
-      <div class="cta-wrapper" style="background-image: url('{{ theme_path }}/assets/img/cta/01.jpg');">
-        <div class="container">
-          <div class="row align-items-center">
-            <div class="col-lg-7 text-center text-lg-start">
-              <div class="cta-text cta-divider">
-                <h1>24/7 Available! Toll Free Number Call Us Immediately.</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet leo tris commodo leo sed, scelerisque turpis. Ut in finibus tellus.</p>
-              </div>
-            </div>
-            <div class="col-lg-5 text-center text-lg-end">
-              <div class="mb-20">
-                <a href="tel:{{ gprep_settings.emergency_phone_link }}" class="cta-number"><span style="font-size: 22px;">{{ gprep_settings.emergency_label }}</span> <i class="far fa-headset"></i>{{ gprep_settings.emergency_phone }}</a>
-                <br>
-                <a href="tel:{{ gprep_settings.phone_link }}" class="cta-number"><i class="far fa-phone"></i>{{ gprep_settings.phone }}</a>
-              </div>
-              <div class="cta-btn">
-                <a href="/contact" class="theme-btn theme-btn2">Contact Us Now<i class="fas fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endif %}
+    {{ page.homepage_cta_section }}
 
-    {% if page.homepage_who_is_gprep_section %}
-      {{ page.homepage_who_is_gprep_section }}
-    {% else %}
-    <section class="section-lg our-security-section_two">
-      <div class="container pbmit-col-stretched-yes pbmit-col-right">
-        <div class="row g-0">
-          <div class="col-md-2 our-security-two_col1">
-            <div class="our-security-two-title_box">
-              <h2>We perform over <span>400 Successful</span> <br> GPREP service every year</h2>
-            </div>
-          </div>
-          <div class="col-md-4 our-security-two_col2">
-            <div class="our-security-two_img">
-              <div class="icon_box">
-                <div class="pbmit-icon_wrapper">
-                  <i class="fas fa-star"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 our-security-two_col3">
-            <div class="our-security-two_right">
-              <h2 class="heading_title mb-3">Who is GPREP?</h2>
-              <p><strong>GPREP</strong> is comprised of and funded by five municipalities, they are the:</p>
-              <ul class="list-group list-group-borderless mb-4">
-                <li class="list-group-item">
-                  <i class="fa fa-square-full"></i>
-                  <span class="pbmit-icon-list-text">City of Grande Prairie</span>
-                </li>
-                <li class="list-group-item">
-                  <i class="fa fa-square-full"></i>
-                  <span class="pbmit-icon-list-text">County of Grande Prairie</span>
-                </li>
-                <li class="list-group-item">
-                  <i class="fa fa-square-full"></i>
-                  <span class="pbmit-icon-list-text">Towns of Beaverlodge, Sexsmith and Wembley</span>
-                </li>
-              </ul>
-              <h2 class="heading_title mb-3">Our Responsibility</h2>
-              <p><strong>GPREP</strong> prepares municipalities by coordinating emergency response exercises and providing training opportunities.</p>
-              <p><strong>GPREP</strong> responds to disasters by bringing together key players and establishing a control center to support first responders, and plan and coordinate the emergency response.</p>
-              <div>
-                <a href="/about" class="theme-btn mt-4">Read More<i class="fas fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    {% endif %}
+    {{ page.homepage_who_is_gprep_section }}
   {% elseif is_about_page %}
     <div class="site-breadcrumb" style="background: url('{{ theme_path }}/assets/img/breadcrumb/01.jpg')">
       <div class="container">
@@ -954,7 +799,7 @@
       </div>
     </div>
 
-    {% if about_page_partner_municipalities_view or about_page_partner_municipalities %}
+    {% if about_page_partner_section and about_page_partner_municipalities %}
       <div class="partner-area bg pt-50 pb-50">
         <div class="container">
           <div class="gprep-partner-shell">
@@ -966,16 +811,13 @@
                 </div>
               </div>
             </div>
-            {{ about_page_partner_municipalities_view ?: '' }}
-            {% if not about_page_partner_municipalities_view %}
-              <div class="partner-wrapper gprep-partner-grid">
-                {% for item in about_page_partner_municipalities %}
-                  <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
-                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                  </a>
-                {% endfor %}
-              </div>
-            {% endif %}
+            <div class="partner-wrapper gprep-partner-grid">
+              {% for item in about_page_partner_municipalities %}
+                <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                  <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                </a>
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>

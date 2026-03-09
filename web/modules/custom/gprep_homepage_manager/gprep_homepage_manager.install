@@ -5,6 +5,8 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\NodeType;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\views\Entity\View;
+use Drupal\block\Entity\Block;
+use Drupal\block_content\Entity\BlockContent;
 
 /**
  * Implements hook_install().
@@ -270,6 +272,345 @@ function gprep_homepage_manager_update_11006(): void {
  */
 function gprep_homepage_manager_update_11007(): void {
   _gprep_homepage_manager_ensure_news_item_form_display();
+}
+
+/**
+ * Creates admin form layouts for dynamic item content types.
+ */
+function gprep_homepage_manager_update_11008(): void {
+  _gprep_homepage_manager_ensure_form_display('partner_municipality', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Partner name']],
+    'field_logo_image' => ['type' => 'image_image', 'weight' => 1, 'settings' => ['progress_indicator' => 'throbber']],
+    'field_partner_url' => ['type' => 'link_default', 'weight' => 2, 'settings' => ['placeholder_url' => 'https://example.com']],
+    'field_display_order' => ['type' => 'number', 'weight' => 3, 'settings' => ['placeholder' => '0']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('resource_item', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Resource title']],
+    'field_resource_summary' => ['type' => 'text_textarea', 'weight' => 1, 'settings' => ['rows' => 5, 'placeholder' => 'Short summary']],
+    'field_resource_body' => ['type' => 'text_textarea', 'weight' => 2, 'settings' => ['rows' => 14, 'placeholder' => 'Full resource content']],
+    'field_card_image' => ['type' => 'image_image', 'weight' => 3, 'settings' => ['progress_indicator' => 'throbber']],
+    'field_icon_image' => ['type' => 'image_image', 'weight' => 4, 'settings' => ['progress_indicator' => 'throbber']],
+    'field_button_text' => ['type' => 'string_textfield', 'weight' => 5, 'settings' => ['size' => 30, 'placeholder' => 'Read More']],
+    'field_button_link' => ['type' => 'link_default', 'weight' => 6, 'settings' => ['placeholder_url' => '/resources/example']],
+    'field_display_order' => ['type' => 'number', 'weight' => 7, 'settings' => ['placeholder' => '0']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('faq_item', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Question']],
+    'field_answer_body' => ['type' => 'text_textarea', 'weight' => 1, 'settings' => ['rows' => 10, 'placeholder' => 'Answer']],
+    'field_display_order' => ['type' => 'number', 'weight' => 2, 'settings' => ['placeholder' => '0']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('enrolled_member', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Member name']],
+    'field_person_role' => ['type' => 'string_textfield', 'weight' => 1, 'settings' => ['size' => 60, 'placeholder' => 'Designation']],
+    'field_profile_image' => ['type' => 'image_image', 'weight' => 2, 'settings' => ['progress_indicator' => 'throbber']],
+    'field_display_order' => ['type' => 'number', 'weight' => 3, 'settings' => ['placeholder' => '0']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('stakeholder_item', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Stakeholder name']],
+    'field_person_role' => ['type' => 'string_textfield', 'weight' => 1, 'settings' => ['size' => 60, 'placeholder' => 'Designation']],
+    'field_profile_image' => ['type' => 'image_image', 'weight' => 2, 'settings' => ['progress_indicator' => 'throbber']],
+    'field_display_order' => ['type' => 'number', 'weight' => 3, 'settings' => ['placeholder' => '0']],
+  ]);
+}
+
+/**
+ * Creates admin form layouts for incident and emergency-related models.
+ */
+function gprep_homepage_manager_update_11009(): void {
+  _gprep_homepage_manager_ensure_form_display('incident_type', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Incident type name']],
+  ]);
+
+  if ($field = FieldConfig::loadByName('node', 'news_item', 'field_incident')) {
+    $field->setDescription('Select the incident type that this news item belongs to. This is used for filtering and emergency-related publishing flows.');
+    $field->save();
+  }
+}
+
+/**
+ * Creates editor-friendly forms for homepage section content types.
+ */
+function gprep_homepage_manager_update_11010(): void {
+  _gprep_homepage_manager_ensure_form_display('hero_slide', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Slide heading']],
+    'field_slide_description' => ['type' => 'text_textarea', 'weight' => 1, 'settings' => ['rows' => 5, 'placeholder' => 'Short supporting copy for the slide']],
+    'field_slide_image' => ['type' => 'image_image', 'weight' => 2, 'settings' => ['progress_indicator' => 'throbber']],
+    'field_button_text' => ['type' => 'string_textfield', 'weight' => 3, 'settings' => ['size' => 30, 'placeholder' => 'Read More']],
+    'field_button_link' => ['type' => 'link_default', 'weight' => 4, 'settings' => ['placeholder_url' => '/news/example']],
+    'field_display_order' => ['type' => 'number', 'weight' => 5, 'settings' => ['placeholder' => '0']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('emergency_banner_item', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 80, 'placeholder' => 'Emergency ticker message']],
+    'field_display_order' => ['type' => 'number', 'weight' => 1, 'settings' => ['placeholder' => '0']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('homepage_about_section', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Main heading']],
+    'field_section_tagline' => ['type' => 'string_textfield', 'weight' => 1, 'settings' => ['size' => 40, 'placeholder' => 'About Us']],
+    'field_primary_body' => ['type' => 'text_textarea', 'weight' => 2, 'settings' => ['rows' => 6, 'placeholder' => 'Primary description']],
+    'field_secondary_heading' => ['type' => 'string_textfield', 'weight' => 3, 'settings' => ['size' => 60, 'placeholder' => 'Secondary heading']],
+    'field_secondary_body' => ['type' => 'text_textarea', 'weight' => 4, 'settings' => ['rows' => 6, 'placeholder' => 'Secondary description']],
+    'field_section_image' => ['type' => 'image_image', 'weight' => 5, 'settings' => ['progress_indicator' => 'throbber']],
+    'field_button_text' => ['type' => 'string_textfield', 'weight' => 6, 'settings' => ['size' => 30, 'placeholder' => 'Discover More']],
+    'field_button_link' => ['type' => 'link_default', 'weight' => 7, 'settings' => ['placeholder_url' => '/about']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('homepage_partner_section', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Section heading']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('homepage_resources_section', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Section heading']],
+    'field_button_text' => ['type' => 'string_textfield', 'weight' => 1, 'settings' => ['size' => 30, 'placeholder' => 'View All Resources']],
+    'field_button_link' => ['type' => 'link_default', 'weight' => 2, 'settings' => ['placeholder_url' => '/resources']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('homepage_faq_section', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Section heading']],
+    'field_section_tagline' => ['type' => 'string_textfield', 'weight' => 1, 'settings' => ['size' => 40, 'placeholder' => 'FAQ']],
+    'field_primary_body' => ['type' => 'text_textarea', 'weight' => 2, 'settings' => ['rows' => 4, 'placeholder' => 'Short intro copy']],
+    'field_secondary_heading' => ['type' => 'string_textfield', 'weight' => 3, 'settings' => ['size' => 60, 'placeholder' => 'Questions list heading']],
+    'field_button_text' => ['type' => 'string_textfield', 'weight' => 4, 'settings' => ['size' => 30, 'placeholder' => 'View All FAQs']],
+    'field_button_link' => ['type' => 'link_default', 'weight' => 5, 'settings' => ['placeholder_url' => '/faq']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('home_enrolled_section', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Section heading']],
+    'field_primary_body' => ['type' => 'text_textarea', 'weight' => 1, 'settings' => ['rows' => 5, 'placeholder' => 'Short section intro']],
+    'field_button_text' => ['type' => 'string_textfield', 'weight' => 2, 'settings' => ['size' => 30, 'placeholder' => 'View All Enrolled Members']],
+    'field_button_link' => ['type' => 'link_default', 'weight' => 3, 'settings' => ['placeholder_url' => '/enrolled-members']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('home_stakeholder_section', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Section heading']],
+    'field_primary_body' => ['type' => 'text_textarea', 'weight' => 1, 'settings' => ['rows' => 5, 'placeholder' => 'Short section intro']],
+    'field_button_text' => ['type' => 'string_textfield', 'weight' => 2, 'settings' => ['size' => 30, 'placeholder' => 'View All Stakeholders']],
+    'field_button_link' => ['type' => 'link_default', 'weight' => 3, 'settings' => ['placeholder_url' => '/stakeholders']],
+  ]);
+
+  _gprep_homepage_manager_ensure_form_display('home_news_section', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 60, 'placeholder' => 'Section heading']],
+  ]);
+
+  _gprep_homepage_manager_update_field_metadata('node', 'hero_slide', 'field_slide_description', 'Slide Description', 'Short supporting copy shown below the slide heading.');
+  _gprep_homepage_manager_update_field_metadata('node', 'hero_slide', 'field_slide_image', 'Slide Background Image', 'Upload the main background image for this hero slide.');
+  _gprep_homepage_manager_update_field_metadata('node', 'hero_slide', 'field_button_text', 'Slide Button Text', 'Optional call-to-action label shown on the slide.');
+  _gprep_homepage_manager_update_field_metadata('node', 'hero_slide', 'field_button_link', 'Slide Button Link', 'Optional link for the hero slide button.');
+  _gprep_homepage_manager_update_field_metadata('node', 'emergency_banner_item', 'field_display_order', 'Display Order', 'Lower numbers appear first in the emergency ticker.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_about_section', 'field_section_tagline', 'Section Tagline', 'Short label shown above the main heading.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_about_section', 'field_primary_body', 'Primary Body', 'Main descriptive paragraph for the section.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_about_section', 'field_secondary_heading', 'Secondary Heading', 'Optional second heading shown beside the main content.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_about_section', 'field_secondary_body', 'Secondary Body', 'Optional follow-up paragraph for the second column.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_about_section', 'field_section_image', 'Section Image', 'Primary image used in the About section.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_resources_section', 'field_button_text', 'Button Text', 'Label used for the section CTA.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_resources_section', 'field_button_link', 'Button Link', 'Destination for the section CTA.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_faq_section', 'field_section_tagline', 'Section Tagline', 'Small label displayed above the FAQ heading.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_faq_section', 'field_primary_body', 'Intro Text', 'Short supporting text shown next to the FAQ accordion.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_faq_section', 'field_secondary_heading', 'Accordion Heading', 'Heading displayed above the FAQ list.');
+  _gprep_homepage_manager_update_field_metadata('node', 'home_enrolled_section', 'field_primary_body', 'Section Intro', 'Short paragraph introducing the enrolled members section.');
+  _gprep_homepage_manager_update_field_metadata('node', 'home_stakeholder_section', 'field_primary_body', 'Section Intro', 'Short paragraph introducing the stakeholders section.');
+}
+
+/**
+ * Improves labels, help text, and editor guidance for key editorial forms.
+ */
+function gprep_homepage_manager_update_11011(): void {
+  _gprep_homepage_manager_ensure_news_item_form_display();
+  _gprep_homepage_manager_ensure_form_display('faq_item', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 70, 'placeholder' => 'FAQ question']],
+    'field_answer_body' => ['type' => 'text_textarea', 'weight' => 1, 'settings' => ['rows' => 10, 'placeholder' => 'Full answer shown when the item is expanded']],
+    'field_display_order' => ['type' => 'number', 'weight' => 2, 'settings' => ['placeholder' => '0']],
+  ]);
+  _gprep_homepage_manager_ensure_form_display('resource_item', [
+    'title' => ['type' => 'string_textfield', 'weight' => 0, 'settings' => ['size' => 70, 'placeholder' => 'Resource title']],
+    'field_resource_summary' => ['type' => 'text_textarea', 'weight' => 1, 'settings' => ['rows' => 5, 'placeholder' => 'Short summary used on cards and listings']],
+    'field_resource_body' => ['type' => 'text_textarea', 'weight' => 2, 'settings' => ['rows' => 14, 'placeholder' => 'Full resource page content']],
+    'field_card_image' => ['type' => 'image_image', 'weight' => 3, 'settings' => ['progress_indicator' => 'throbber']],
+    'field_icon_image' => ['type' => 'image_image', 'weight' => 4, 'settings' => ['progress_indicator' => 'throbber']],
+    'field_button_text' => ['type' => 'string_textfield', 'weight' => 5, 'settings' => ['size' => 30, 'placeholder' => 'Read More']],
+    'field_button_link' => ['type' => 'link_default', 'weight' => 6, 'settings' => ['placeholder_url' => '/resources/example']],
+    'field_display_order' => ['type' => 'number', 'weight' => 7, 'settings' => ['placeholder' => '0']],
+  ]);
+
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_resource_summary', 'News Summary', 'Short summary used on cards, listings, and sidebar updates.');
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_news_body', 'Full News Content', 'Main article content shown on the individual news page.');
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_card_image', 'News Image', 'Featured image used on the news listing and detail page.');
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_display_date', 'News Date', 'Date text shown to visitors, for example 14 Jun 2025.');
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_display_time', 'News Time', 'Time text shown with the article, for example 11:15 AM.');
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_source_url', 'Original Source URL', 'Optional reference link to the original source or official update.');
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_button_text', 'Button Text', 'Optional CTA label used on selected layouts.');
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_button_link', 'Button Link', 'Optional CTA destination used on selected layouts.');
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_display_order', 'Display Order', 'Optional manual override. Lower numbers appear first when order-based sorting is used.');
+  _gprep_homepage_manager_update_field_metadata('node', 'resource_item', 'field_resource_summary', 'Resource Summary', 'Short summary used on resource cards and listings.');
+  _gprep_homepage_manager_update_field_metadata('node', 'resource_item', 'field_resource_body', 'Full Resource Content', 'Main body content shown on the resource detail page.');
+  _gprep_homepage_manager_update_field_metadata('node', 'resource_item', 'field_card_image', 'Resource Card Image', 'Featured image for the resource card and detail header.');
+  _gprep_homepage_manager_update_field_metadata('node', 'resource_item', 'field_icon_image', 'Resource Icon', 'Small icon used in the resource card layout.');
+  _gprep_homepage_manager_update_field_metadata('node', 'faq_item', 'field_answer_body', 'FAQ Answer', 'Full answer shown when the FAQ item is expanded.');
+}
+
+/**
+ * Creates homepage utility blocks and places them in theme regions.
+ */
+function gprep_homepage_manager_update_11012(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('block_content')) {
+    return;
+  }
+
+  $app_body = <<<'HTML'
+<div class="feature-area feature-bg py-120">
+  <div class="container">
+    <div class="feature-wrapper mt-5">
+      <div class="row">
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-item wow fadeInUp p-3 mb-3" data-wow-delay=".25s">
+            <h4 class="feature-title mb-0">Be Prepared</h4>
+            <p class="mb-2"><strong>Alberta</strong></p>
+            <div class="text-center">
+              <a href="https://www.alberta.ca/emergency-preparedness?utm_source=redirect&amp;utm_medium=poster&amp;utm_campaign=GoA&amp;utm_term=BePrepared" target="_blank" rel="noopener noreferrer" class="theme-btn mt-0 py-2 rounded-5">Read More<i class="fas fa-arrow-right"></i></a>
+            </div>
+          </div>
+          <div class="feature-item wow fadeInDown p-3" data-wow-delay=".25s">
+            <h4 class="feature-title mb-0">Get Prepared</h4>
+            <p class="mb-2"><strong>Canada</strong></p>
+            <div class="text-center">
+              <a href="https://www.canada.ca/en/services/policing/emergencies/preparedness/get-prepared.html" target="_blank" rel="noopener noreferrer" class="theme-btn py-2 rounded-5">Read More<i class="fas fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-item wow fadeInDown px-3" data-wow-delay=".25s">
+            <div class="feature-icon">
+              <img src="/themes/custom/gprep_theme/assets/img/icon/ab_icon.png" alt="AB Wildfire Status">
+            </div>
+            <h4 class="feature-title mb-0">AB Wildfire Status</h4>
+            <p class="mb-2"><strong>APP</strong></p>
+            <p>Download the app</p>
+            <div class="text-center">
+              <a href="https://play.google.com/store/apps/details?id=com.ab.wildfire" target="_blank" rel="noopener noreferrer" class="theme-btn mt-3 py-2" style="background: #000; width: 100%;"><img src="/themes/custom/gprep_theme/assets/img/icon/google_play_store.png" style="width: 18px; margin-right: 5px;" alt=""> Google Play Store</a>
+              <a href="https://apps.apple.com/ca/app/ab-wildfire-status/id1554525514" target="_blank" rel="noopener noreferrer" class="theme-btn py-2" style="background: #000; width: 100%;"><img src="/themes/custom/gprep_theme/assets/img/icon/apple_play_store.png" style="width: 18px; margin-right: 5px;" alt=""> Apple App Store</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+          <div class="feature-item wow fadeInUp" data-wow-delay=".25s">
+            <div class="feature-icon">
+              <img src="/themes/custom/gprep_theme/assets/img/icon/ae_icon.png" alt="Alberta Emergency Alert">
+            </div>
+            <div class="d-block d-md-flex gap-4 align-items-center">
+              <div class="col-5 p-0">
+                <img src="/themes/custom/gprep_theme/assets/img/02.jpg" style="width: 100%;" alt="Alberta Emergency Alert">
+              </div>
+              <div class="col text-start">
+                <h4 class="feature-title">Alberta Emergency Alert</h4>
+                <p>Visit the <strong>Alberta Emergency Alert website</strong> for more information, or to <strong>download the app.</strong></p>
+              </div>
+            </div>
+            <div>
+              <a href="https://play.google.com/store/apps/details?id=ca.ab.gov.aea" target="_blank" rel="noopener noreferrer" class="theme-btn mt-3 py-2" style="background: #000;"><img src="/themes/custom/gprep_theme/assets/img/icon/google_play_store.png" style="width: 18px; margin-right: 5px;" alt=""> Google Play Store</a>
+              <a href="https://apps.apple.com/ca/app/alberta-emergency-alert/id887604348" target="_blank" rel="noopener noreferrer" class="theme-btn py-2" style="background: #000;"><img src="/themes/custom/gprep_theme/assets/img/icon/apple_play_store.png" style="width: 18px; margin-right: 5px;" alt=""> Apple App Store</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+HTML;
+
+  $config = \Drupal::config('gprep_site_settings.settings');
+  $emergency_label = $config->get('emergency_label') ?: 'Emergency Call';
+  $emergency_phone = $config->get('emergency_phone') ?: '9-1-1';
+  $emergency_phone_link = $config->get('emergency_phone_link') ?: '911';
+  $phone = $config->get('phone') ?: '780-830-5002';
+  $phone_link = $config->get('phone_link') ?: '7808305002';
+  $cta_body = <<<HTML
+<div class="cta-area mt-0">
+  <div class="cta-wrapper" style="background-image: url('/themes/custom/gprep_theme/assets/img/cta/01.jpg');">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-7 text-center text-lg-start">
+          <div class="cta-text cta-divider">
+            <h1>24/7 Available! Toll Free Number Call Us Immediately.</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet leo tris commodo leo sed, scelerisque turpis. Ut in finibus tellus.</p>
+          </div>
+        </div>
+        <div class="col-lg-5 text-center text-lg-end">
+          <div class="mb-20">
+            <a href="tel:{$emergency_phone_link}" class="cta-number"><span style="font-size: 22px;">{$emergency_label}</span> <i class="far fa-headset"></i>{$emergency_phone}</a>
+            <br>
+            <a href="tel:{$phone_link}" class="cta-number"><i class="far fa-phone"></i>{$phone}</a>
+          </div>
+          <div class="cta-btn">
+            <a href="/contact" class="theme-btn theme-btn2">Contact Us Now<i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+HTML;
+
+  $who_body = <<<'HTML'
+<section class="section-lg our-security-section_two">
+  <div class="container pbmit-col-stretched-yes pbmit-col-right">
+    <div class="row g-0">
+      <div class="col-md-2 our-security-two_col1">
+        <div class="our-security-two-title_box">
+          <h2>We perform over <span>400 Successful</span> <br> GPREP service every year</h2>
+        </div>
+      </div>
+      <div class="col-md-4 our-security-two_col2">
+        <div class="our-security-two_img">
+          <div class="icon_box">
+            <div class="pbmit-icon_wrapper">
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 our-security-two_col3">
+        <div class="our-security-two_right">
+          <h2 class="heading_title mb-3">Who is GPREP?</h2>
+          <p><strong>GPREP</strong> is comprised of and funded by five municipalities, they are the:</p>
+          <ul class="list-group list-group-borderless mb-4">
+            <li class="list-group-item">
+              <i class="fa fa-square-full"></i>
+              <span class="pbmit-icon-list-text">City of Grande Prairie</span>
+            </li>
+            <li class="list-group-item">
+              <i class="fa fa-square-full"></i>
+              <span class="pbmit-icon-list-text">County of Grande Prairie</span>
+            </li>
+            <li class="list-group-item">
+              <i class="fa fa-square-full"></i>
+              <span class="pbmit-icon-list-text">Towns of Beaverlodge, Sexsmith and Wembley</span>
+            </li>
+          </ul>
+          <h2 class="heading_title mb-3">Our Responsibility</h2>
+          <p><strong>GPREP</strong> prepares municipalities by coordinating emergency response exercises and providing training opportunities.</p>
+          <p><strong>GPREP</strong> responds to disasters by bringing together key players and establishing a control center to support first responders, and plan and coordinate the emergency response.</p>
+          <div>
+            <a href="/about" class="theme-btn mt-4">Read More<i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+HTML;
+
+  $app_block = _gprep_homepage_manager_ensure_basic_block('Homepage App Section', $app_body);
+  $cta_block = _gprep_homepage_manager_ensure_basic_block('Homepage CTA Section', $cta_body);
+  $who_block = _gprep_homepage_manager_ensure_basic_block('Homepage Who Is GPREP Section', $who_body);
+
+  _gprep_homepage_manager_place_block('gprep_theme_homepage_app_section', $app_block->uuid(), 'homepage_app_section');
+  _gprep_homepage_manager_place_block('gprep_theme_homepage_cta_section', $cta_block->uuid(), 'homepage_cta_section');
+  _gprep_homepage_manager_place_block('gprep_theme_homepage_who_section', $who_block->uuid(), 'homepage_who_is_gprep_section');
 }
 
 /**
@@ -638,4 +979,129 @@ function _gprep_homepage_manager_ensure_news_item_form_display(): void {
       'settings' => ['placeholder' => '0'],
     ])
     ->save();
+}
+
+/**
+ * Ensures a content type has a working editor form display.
+ */
+function _gprep_homepage_manager_ensure_form_display(string $bundle, array $components): void {
+  $display = EntityFormDisplay::load("node.$bundle.default");
+  if (!$display) {
+    $display = EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $bundle,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  foreach ($components as $field_name => $component) {
+    $display->setComponent($field_name, [
+      'type' => $component['type'],
+      'weight' => $component['weight'],
+      'region' => 'content',
+      'settings' => $component['settings'] ?? [],
+      'third_party_settings' => [],
+    ]);
+  }
+
+  $display->save();
+}
+
+/**
+ * Updates a field label/description when the field exists.
+ */
+function _gprep_homepage_manager_update_field_metadata(string $entity_type, string $bundle, string $field_name, string $label, string $description = ''): void {
+  if ($field = FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+    $field->setLabel($label);
+    $field->setDescription($description);
+    $field->save();
+  }
+}
+
+/**
+ * Ensures a basic custom block exists with the provided markup.
+ */
+function _gprep_homepage_manager_ensure_basic_block(string $info, string $body_value): BlockContent {
+  $storage = \Drupal::entityTypeManager()->getStorage('block_content');
+  $matches = $storage->loadByProperties([
+    'type' => 'basic',
+    'info' => $info,
+  ]);
+  /** @var \Drupal\block_content\Entity\BlockContent|null $block_content */
+  $block_content = $matches ? reset($matches) : NULL;
+  if (!$block_content) {
+    $block_content = BlockContent::create([
+      'type' => 'basic',
+      'info' => $info,
+      'body' => [
+        'value' => $body_value,
+        'format' => 'full_html',
+      ],
+    ]);
+  }
+  else {
+    $block_content->set('body', [
+      'value' => $body_value,
+      'format' => 'full_html',
+    ]);
+  }
+  $block_content->save();
+
+  return $block_content;
+}
+
+/**
+ * Places a custom block into the given theme region.
+ */
+function _gprep_homepage_manager_place_block(string $block_id, string $uuid, string $region, int $weight = 0): void {
+  $plugin_id = 'block_content:' . $uuid;
+  $block = Block::load($block_id);
+  if (!$block) {
+    $block = Block::create([
+      'id' => $block_id,
+      'theme' => 'gprep_theme',
+      'region' => $region,
+      'plugin' => $plugin_id,
+      'weight' => $weight,
+      'visibility' => [
+        'request_path' => [
+          'id' => 'request_path',
+          'pages' => '<front>',
+          'negate' => FALSE,
+          'context_mapping' => [],
+        ],
+      ],
+      'settings' => [
+        'id' => $plugin_id,
+        'label' => '',
+        'label_display' => FALSE,
+        'provider' => 'block_content',
+        'status' => TRUE,
+        'view_mode' => 'full',
+      ],
+    ]);
+  }
+  else {
+    $block->setRegion($region);
+    $block->setPlugin($plugin_id);
+    $block->set('settings', [
+      'id' => $plugin_id,
+      'label' => '',
+      'label_display' => FALSE,
+      'provider' => 'block_content',
+      'status' => TRUE,
+      'view_mode' => 'full',
+    ]);
+    $block->set('visibility', [
+      'request_path' => [
+        'id' => 'request_path',
+        'pages' => '<front>',
+        'negate' => FALSE,
+        'context_mapping' => [],
+      ],
+    ]);
+    $block->setWeight($weight);
+  }
+  $block->save();
 }

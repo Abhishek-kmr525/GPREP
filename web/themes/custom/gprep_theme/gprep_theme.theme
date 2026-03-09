@@ -82,8 +82,7 @@ function gprep_theme_preprocess_page(array &$variables): void {
   $cacheability->applyTo($variables);
   if ($variables['is_about_page']) {
     $variables['about_page_partner_section'] = gprep_theme_get_homepage_single_node('homepage_partner_section');
-    $variables['about_page_partner_municipalities'] = gprep_theme_get_homepage_nodes('partner_municipality', 20);
-    $variables['about_page_partner_municipalities_view'] = gprep_theme_render_view('gprep_partner_municipalities', 'block_1');
+    $variables['about_page_partner_municipalities'] = gprep_theme_get_view_items('gprep_partner_municipalities', 'block_1');
   }
   if ($variables['is_enrolled_members_page']) {
     $variables['enrolled_members_page_section'] = gprep_theme_get_homepage_single_node('home_enrolled_section');
@@ -131,23 +130,17 @@ function gprep_theme_preprocess_page(array &$variables): void {
     $variables['homepage_emergency_updates'] = gprep_theme_get_news_items(20);
     $variables['homepage_about_section'] = gprep_theme_get_homepage_single_node('homepage_about_section');
     $variables['homepage_partner_section'] = gprep_theme_get_homepage_single_node('homepage_partner_section');
-    $variables['homepage_partner_municipalities'] = gprep_theme_get_homepage_nodes('partner_municipality', 20);
-    $variables['homepage_partner_municipalities_view'] = gprep_theme_render_view('gprep_partner_municipalities', 'block_1');
+    $variables['homepage_partner_municipalities'] = gprep_theme_get_view_items('gprep_partner_municipalities', 'block_1');
     $variables['homepage_resources_section'] = gprep_theme_get_homepage_single_node('homepage_resources_section');
-    $variables['homepage_resource_items'] = gprep_theme_get_homepage_nodes('resource_item', 6);
-    $variables['homepage_resources_view'] = gprep_theme_render_view('gprep_homepage_resources', 'block_1');
+    $variables['homepage_resource_items'] = gprep_theme_get_view_items('gprep_homepage_resources', 'block_1');
     $variables['homepage_faq_section'] = gprep_theme_get_homepage_single_node('homepage_faq_section');
-    $variables['homepage_faq_items'] = gprep_theme_get_homepage_nodes('faq_item', 10);
-    $variables['homepage_faq_view'] = gprep_theme_render_view('gprep_homepage_faq', 'block_1');
+    $variables['homepage_faq_items'] = gprep_theme_get_view_items('gprep_homepage_faq', 'block_1');
     $variables['homepage_enrolled_members_section'] = gprep_theme_get_homepage_single_node('home_enrolled_section');
-    $variables['homepage_enrolled_members'] = gprep_theme_get_homepage_nodes('enrolled_member', 8);
-    $variables['homepage_enrolled_members_view'] = gprep_theme_render_view('gprep_homepage_enrolled_members', 'block_1');
+    $variables['homepage_enrolled_members'] = gprep_theme_get_view_items('gprep_homepage_enrolled_members', 'block_1');
     $variables['homepage_stakeholders_section'] = gprep_theme_get_homepage_single_node('home_stakeholder_section');
-    $variables['homepage_stakeholder_items'] = gprep_theme_get_homepage_nodes('stakeholder_item', 8);
-    $variables['homepage_stakeholders_view'] = gprep_theme_render_view('gprep_homepage_stakeholders', 'block_1');
+    $variables['homepage_stakeholder_items'] = gprep_theme_get_view_items('gprep_homepage_stakeholders', 'block_1');
     $variables['homepage_news_section'] = gprep_theme_get_homepage_single_node('home_news_section');
-    $variables['homepage_news_items'] = gprep_theme_get_news_items(3);
-    $variables['homepage_news_view'] = gprep_theme_render_view('gprep_homepage_news', 'block_1');
+    $variables['homepage_news_items'] = gprep_theme_get_view_items('gprep_homepage_news', 'block_1');
     if ($variables['show_emergency_homepage']) {
       $variables['emergency_primary_update'] = $variables['homepage_emergency_updates'][0] ?? [];
       $variables['emergency_resource_items'] = gprep_theme_get_homepage_nodes('resource_item', 12);
@@ -596,13 +589,27 @@ function gprep_theme_parse_emergency_link_lines(string $value): array {
 }
 
 /**
- * Renders a Drupal view display when available.
+ * Returns normalized items from a Drupal view display.
  */
-function gprep_theme_render_view(string $view_id, string $display_id): array {
+function gprep_theme_get_view_items(string $view_id, string $display_id): array {
   $view = Views::getView($view_id);
   if (!$view) {
     return [];
   }
 
-  return $view->buildRenderable($display_id, [], FALSE);
+  if (!$view->access($display_id)) {
+    return [];
+  }
+
+  $view->setDisplay($display_id);
+  $view->execute();
+  $items = [];
+
+  foreach ($view->result as $row) {
+    if (!empty($row->_entity) && $row->_entity instanceof NodeInterface) {
+      $items[] = gprep_theme_normalize_homepage_node($row->_entity);
+    }
+  }
+
+  return $items;
 }

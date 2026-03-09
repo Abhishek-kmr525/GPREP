@@ -16,3 +16,21 @@ gprep_homepage_manager.news_admin:
     _permission: 'access content overview'
   options:
     _admin_route: true
+
+gprep_homepage_manager.faq_admin:
+  path: '/admin/gprep/faq'
+  defaults:
+    _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::faqRedirect'
+  requirements:
+    _permission: 'access content overview'
+  options:
+    _admin_route: true
+
+gprep_homepage_manager.resource_admin:
+  path: '/admin/gprep/resources'
+  defaults:
+    _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::resourceRedirect'
+  requirements:
+    _permission: 'access content overview'
+  options:
+    _admin_route: true

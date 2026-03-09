@@ -9,6 +9,28 @@ Site URLs:
 - Admin login: `http://localhost:8080/user/login`
 - Admin dashboard: `http://localhost:8080/admin`
 
+## Admin Experience
+
+The Drupal admin panel now uses the `Gin` admin theme with GPREP branding.
+
+What changed:
+- the admin top bar now uses the GPREP logo
+- the admin theme is cleaner and easier for non-technical editors
+- a dedicated `GPREP Admin` area is available in the top admin navigation
+
+Main editorial starting point:
+- `http://localhost:8080/admin/gprep/editorial`
+
+What editors should use first:
+- `GPREP Admin > Dashboard`
+- `GPREP Admin > News > All News / Add News`
+- `GPREP Admin > FAQs > All FAQs / Add FAQ`
+- `GPREP Admin > Resources > All Resources / Add Resource`
+
+Search note:
+- Gin and the admin toolbar include a search-focused admin experience in the top bar
+- this should be used together with the dashboard for faster navigation
+
 ## What Is Editable From Admin
 
 The following homepage sections are now backend-managed:
@@ -56,6 +78,9 @@ Field notes:
 - `Title`: message shown in the ticker
 - `Display Order`: lower number shows first
 
+Editor note:
+- if more than one ticker item is published, the lowest `Display Order` appears first
+
 ## 2. Hero Banner Slider
 
 This is the large homepage banner with image, title, description, and button.
@@ -79,10 +104,13 @@ To edit or delete:
 Field notes:
 - `Title`: main banner heading
 - `Slide Description`: banner text under the heading
-- `Slide Image`: background image for the slide
-- `Button Text`: CTA text such as `Read More`
-- `Button Link`: CTA destination
+- `Slide Background Image`: background image for the slide
+- `Slide Button Text`: CTA text such as `Read More`
+- `Slide Button Link`: CTA destination
 - `Display Order`: lower number shows first
+
+Editor note:
+- the form follows the same order as the frontend slide: heading, description, image, CTA, then order
 
 ## 3. Emergency Updates Panel
 
@@ -232,12 +260,15 @@ To add or edit resource cards:
 
 Field notes for `Resource Item`:
 - `Title`: card heading
-- `Card Image`: top banner image
-- `Icon Image`: icon used on the card
+- `Resource Card Image`: top banner image
+- `Resource Icon`: icon used on the card
 - `Resource Summary`: short descriptive text
 - `Button Text`: CTA label
 - `Button Link`: CTA destination
 - `Display Order`: controls card order
+
+Editor note:
+- the resource form is ordered for publishing: summary, full content, images, CTA, then display order
 
 ## 9. FAQ Section
 
@@ -267,7 +298,7 @@ Field notes for `Homepage FAQ Section`:
 
 Field notes for `FAQ Item`:
 - `Title`: question
-- `Answer Body`: expanded answer text
+- `FAQ Answer`: expanded answer text
 - `Display Order`: controls question order
 
 ## 10. News Section
@@ -296,14 +327,17 @@ To add or edit incident types:
 
 Field notes for `News Item`:
 - `Title`: headline
-- `Display Date`: optional short date helper field
-- `Display Time`: time shown on the single news page
-- `Card Image`: news image
-- `Summary`: short card text
-- `News Detail Content`: full article content for the single news page
+- `News Summary`: short card text
+- `Full News Content`: full article content for the single news page
+- `News Image`: news image
+- `News Date`: visitor-facing date text
+- `News Time`: time shown on the single news page
 - `Incident`: selected incident type for filtering and sidebar counts
-- `Source URL`: original source link
+- `Original Source URL`: original source link
 - `Display Order`: optional ordering helper field
+
+Editor note:
+- the news form follows a publishing flow: summary, full content, image, date/time, incident, source link, CTA, then display order
 
 ## 10A. News Module And News Pages
 
@@ -523,7 +557,13 @@ Where to edit emergency page content:
 2. Open `Configuration`.
 3. Open `GPREP Site Settings`.
 4. Expand `Emergency details`.
-5. Update the emergency homepage fields and save.
+5. Update the nested sections in this order:
+   - `Emergency contact bar`
+   - `Incident panel`
+   - `Alert panel`
+   - `Donations tab`
+   - `Temporary access tab`
+6. Save the form and review the homepage.
 
 ## Publishing Notes
 
@@ -548,6 +588,15 @@ Where to manage the views:
 3. Open `Views`.
 4. Look for views starting with `GPREP`.
 
+What Views now control:
+- ordering and published-state filtering for the homepage repeatable sections
+- the About page `Partner Municipalities` listing
+- the homepage `News`, `FAQ`, `Resources`, `Enrolled Members`, and `Stakeholders` listings
+
+Important note:
+- editors should usually manage the content items themselves, not the View configuration
+- the Views are now the source of truth for these repeatable listings
+
 Homepage static sections now support Drupal blocks:
 - App section
 - 24/7 CTA section
@@ -558,6 +607,24 @@ Where to place those blocks:
 2. Open `Structure`.
 3. Open `Block layout`.
 4. Select the `GPREP Theme`.
+
+Current block-backed regions:
+- `Homepage App Section`
+- `Homepage CTA Section`
+- `Homepage Who Is GPREP Section`
+
+Where to edit the actual block content:
+1. Log in as admin.
+2. Open `Content`.
+3. Open `Blocks`.
+4. Edit:
+   - `Homepage App Section`
+   - `Homepage CTA Section`
+   - `Homepage Who Is GPREP Section`
+
+Important note:
+- these sections no longer rely on hardcoded theme fallback markup
+- if a block is removed from its region, that homepage section will disappear until a block is placed again
 5. Place blocks in these regions:
    - `Homepage App Section`
    - `Homepage CTA Section`

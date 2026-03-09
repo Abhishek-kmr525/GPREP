@@ -50,6 +50,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Emergency details'),
       '#open' => TRUE,
+      '#description' => $this->t('Use this area to control the emergency homepage and the content shown when emergency mode is active.'),
     ];
     $form['emergency']['emergency_mode'] = [
       '#type' => 'checkbox',
@@ -57,111 +58,144 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#description' => $this->t('When enabled, the public homepage switches from the regular homepage to the emergency homepage layout.'),
       '#default_value' => $config->get('emergency_mode'),
     ];
-    $form['emergency']['emergency_label'] = [
+    $form['emergency']['emergency_contact'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Emergency contact bar'),
+      '#open' => TRUE,
+    ];
+    $form['emergency']['emergency_contact']['emergency_label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Emergency label'),
+      '#description' => $this->t('Small label shown above the emergency phone number in the header area.'),
       '#default_value' => $config->get('emergency_label'),
     ];
-    $form['emergency']['emergency_phone'] = [
+    $form['emergency']['emergency_contact']['emergency_phone'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Emergency phone display text'),
+      '#description' => $this->t('Visible phone text, for example 9-1-1.'),
       '#default_value' => $config->get('emergency_phone'),
     ];
-    $form['emergency']['emergency_phone_link'] = [
+    $form['emergency']['emergency_contact']['emergency_phone_link'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Emergency phone link value'),
+      '#description' => $this->t('Digits only, used in the tel: link.'),
       '#default_value' => $config->get('emergency_phone_link'),
     ];
-    $form['emergency']['emergency_incident_title'] = [
+    $form['emergency']['incident_panel'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Incident panel'),
+      '#open' => TRUE,
+    ];
+    $form['emergency']['incident_panel']['emergency_incident_title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Incident title'),
+      '#description' => $this->t('Main heading shown in the emergency incident details panel.'),
       '#default_value' => $config->get('emergency_incident_title'),
     ];
-    $form['emergency']['emergency_incident_body'] = [
+    $form['emergency']['incident_panel']['emergency_incident_body'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Incident summary'),
       '#description' => $this->t('Shown in the main incident details panel on the emergency homepage.'),
       '#default_value' => $config->get('emergency_incident_body'),
       '#rows' => 4,
     ];
-    $form['emergency']['emergency_incident_button_text'] = [
+    $form['emergency']['incident_panel']['emergency_incident_button_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Incident button text'),
+      '#description' => $this->t('Optional call-to-action label for the incident panel button.'),
       '#default_value' => $config->get('emergency_incident_button_text'),
     ];
-    $form['emergency']['emergency_incident_button_link'] = [
+    $form['emergency']['incident_panel']['emergency_incident_button_link'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Incident button URL'),
       '#description' => $this->t('Use an internal path like /news or a full external URL.'),
       '#default_value' => $config->get('emergency_incident_button_link'),
     ];
-    $form['emergency']['emergency_alert_intro'] = [
+    $form['emergency']['alert_panel'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Alert panel'),
+      '#open' => TRUE,
+    ];
+    $form['emergency']['alert_panel']['emergency_alert_intro'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Alert intro text'),
+      '#description' => $this->t('Introductory text shown above the alert box.'),
       '#default_value' => $config->get('emergency_alert_intro'),
       '#rows' => 3,
     ];
-    $form['emergency']['emergency_alert_feed_title'] = [
+    $form['emergency']['alert_panel']['emergency_alert_feed_title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Alert feed box title'),
       '#default_value' => $config->get('emergency_alert_feed_title'),
     ];
-    $form['emergency']['emergency_alert_feed_message'] = [
+    $form['emergency']['alert_panel']['emergency_alert_feed_message'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Alert feed box message'),
       '#default_value' => $config->get('emergency_alert_feed_message'),
       '#rows' => 2,
     ];
-    $form['emergency']['emergency_alert_type'] = [
+    $form['emergency']['alert_panel']['emergency_alert_type'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Active alert type'),
+      '#description' => $this->t('For example Evacuation Order or Evacuation Alert.'),
       '#default_value' => $config->get('emergency_alert_type'),
     ];
-    $form['emergency']['emergency_alert_area'] = [
+    $form['emergency']['alert_panel']['emergency_alert_area'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Active alert affected area'),
       '#default_value' => $config->get('emergency_alert_area'),
     ];
-    $form['emergency']['emergency_alert_datetime'] = [
+    $form['emergency']['alert_panel']['emergency_alert_datetime'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Active alert date and time'),
+      '#description' => $this->t('Free-text display value shown to visitors.'),
       '#default_value' => $config->get('emergency_alert_datetime'),
     ];
-    $form['emergency']['emergency_alert_instructions'] = [
+    $form['emergency']['alert_panel']['emergency_alert_instructions'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Active alert instructions'),
       '#default_value' => $config->get('emergency_alert_instructions'),
       '#rows' => 3,
     ];
-    $form['emergency']['emergency_donations_heading'] = [
+    $form['emergency']['donations_panel'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Donations tab'),
+      '#open' => TRUE,
+    ];
+    $form['emergency']['donations_panel']['emergency_donations_heading'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Donations heading'),
       '#default_value' => $config->get('emergency_donations_heading'),
     ];
-    $form['emergency']['emergency_donations_items'] = [
+    $form['emergency']['donations_panel']['emergency_donations_items'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Donations list'),
       '#description' => $this->t('One item per line using the format: Title | Button label | URL'),
       '#default_value' => $config->get('emergency_donations_items'),
       '#rows' => 6,
     ];
-    $form['emergency']['emergency_temporary_access_title'] = [
+    $form['emergency']['temporary_access_panel'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Temporary access tab'),
+      '#open' => TRUE,
+    ];
+    $form['emergency']['temporary_access_panel']['emergency_temporary_access_title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Temporary access title'),
       '#default_value' => $config->get('emergency_temporary_access_title'),
     ];
-    $form['emergency']['emergency_temporary_access_body'] = [
+    $form['emergency']['temporary_access_panel']['emergency_temporary_access_body'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Temporary access body'),
       '#default_value' => $config->get('emergency_temporary_access_body'),
       '#rows' => 4,
     ];
-    $form['emergency']['emergency_temporary_access_button_text'] = [
+    $form['emergency']['temporary_access_panel']['emergency_temporary_access_button_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Temporary access button text'),
       '#default_value' => $config->get('emergency_temporary_access_button_text'),
     ];
-    $form['emergency']['emergency_temporary_access_button_link'] = [
+    $form['emergency']['temporary_access_panel']['emergency_temporary_access_button_link'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Temporary access button URL'),
       '#description' => $this->t('Use an internal path like /contact or a full external URL.'),

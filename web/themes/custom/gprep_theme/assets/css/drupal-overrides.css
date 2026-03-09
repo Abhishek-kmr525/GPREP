@@ -198,6 +198,10 @@
   padding: 20px;
 }
 
+.navbar {
+  z-index: 99;
+}
+
 .news-filters .form-label {
   color: #054b7e;
   font-weight: 600;
