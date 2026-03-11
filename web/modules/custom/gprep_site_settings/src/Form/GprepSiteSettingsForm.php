@@ -50,7 +50,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Emergency details'),
       '#open' => TRUE,
-      '#description' => $this->t('Use this area to control the emergency homepage and the content shown when emergency mode is active.'),
+      '#description' => $this->t('Use this area to control the emergency homepage and the content shown when emergency mode is active. Update the panels from top to bottom, save the form, then review the public homepage.'),
     ];
     $form['emergency']['emergency_mode'] = [
       '#type' => 'checkbox',
@@ -62,6 +62,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Emergency contact bar'),
       '#open' => TRUE,
+      '#description' => $this->t('These fields control the compact contact bar shown while emergency mode is active. Keep the label short and use digits only for the tel: value.'),
     ];
     $form['emergency']['emergency_contact']['emergency_label'] = [
       '#type' => 'textfield',
@@ -85,6 +86,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Incident panel'),
       '#open' => TRUE,
+      '#description' => $this->t('This is the main message block on the emergency homepage. If these fields are left blank, the page falls back to the latest published news item.'),
     ];
     $form['emergency']['incident_panel']['emergency_incident_title'] = [
       '#type' => 'textfield',
@@ -115,6 +117,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Alert panel'),
       '#open' => TRUE,
+      '#description' => $this->t('Use this section for the Alberta emergency alert area and the structured alert facts shown to visitors. Keep the wording short and operational.'),
     ];
     $form['emergency']['alert_panel']['emergency_alert_intro'] = [
       '#type' => 'textarea',
@@ -126,11 +129,13 @@ class GprepSiteSettingsForm extends ConfigFormBase {
     $form['emergency']['alert_panel']['emergency_alert_feed_title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Alert feed box title'),
+      '#description' => $this->t('Short heading shown inside the highlighted alert feed box.'),
       '#default_value' => $config->get('emergency_alert_feed_title'),
     ];
     $form['emergency']['alert_panel']['emergency_alert_feed_message'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Alert feed box message'),
+      '#description' => $this->t('Short status note shown under the alert feed title. Use one or two concise sentences.'),
       '#default_value' => $config->get('emergency_alert_feed_message'),
       '#rows' => 2,
     ];
@@ -143,6 +148,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
     $form['emergency']['alert_panel']['emergency_alert_area'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Active alert affected area'),
+      '#description' => $this->t('Name the public-facing area exactly as you want visitors to read it.'),
       '#default_value' => $config->get('emergency_alert_area'),
     ];
     $form['emergency']['alert_panel']['emergency_alert_datetime'] = [
@@ -154,6 +160,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
     $form['emergency']['alert_panel']['emergency_alert_instructions'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Active alert instructions'),
+      '#description' => $this->t('Primary public instructions for the alert, for example evacuate immediately or monitor updates.'),
       '#default_value' => $config->get('emergency_alert_instructions'),
       '#rows' => 3,
     ];
@@ -161,6 +168,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Donations tab'),
       '#open' => TRUE,
+      '#description' => $this->t('Use this for donation campaigns or support links. Leave the list empty if the donations tab should show no links.'),
     ];
     $form['emergency']['donations_panel']['emergency_donations_heading'] = [
       '#type' => 'textfield',
@@ -178,6 +186,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Temporary access tab'),
       '#open' => TRUE,
+      '#description' => $this->t('Use this area for re-entry, access, or short-term public instructions. If left blank, the page falls back to the latest news summary.'),
     ];
     $form['emergency']['temporary_access_panel']['emergency_temporary_access_title'] = [
       '#type' => 'textfield',
@@ -242,6 +251,7 @@ class GprepSiteSettingsForm extends ConfigFormBase {
     $form['misc']['map_embed_url'] = [
       '#type' => 'url',
       '#title' => $this->t('Map embed URL'),
+      '#description' => $this->t('Global ArcGIS or map URL used on the map page, contact page, and the emergency map tab.'),
       '#default_value' => $config->get('map_embed_url'),
     ];
 

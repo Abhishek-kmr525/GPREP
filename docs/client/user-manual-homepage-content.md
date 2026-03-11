@@ -574,6 +574,20 @@ Where to edit emergency page content:
    - `Temporary access tab`
 6. Save the form and review the homepage.
 
+Emergency editor notes:
+- if the `Incident panel` is left blank, the emergency homepage falls back to the latest published news item
+- if the `Temporary access tab` body is left blank, it also falls back to the latest published news summary
+- the `Map embed URL` in site settings is global and is reused by the emergency map tab
+- `Incident Type` records are managed separately and are used on News items for incident filtering and grouping
+- `GPREP Content Editor` can manage incident labels through content, but only `GPREP Site Manager` can change emergency site settings and the emergency mode toggle
+
+Recommended emergency publishing order:
+1. Add or update the latest `News` item first.
+2. Assign the correct `Incident Type` on that news item.
+3. Update the emergency ticker items if needed.
+4. Turn `Emergency Mode` on.
+5. Review the public homepage on desktop and mobile.
+
 ## Publishing Notes
 
 - Any content can be unpublished if it should not appear on the website.

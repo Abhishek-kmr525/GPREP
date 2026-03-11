@@ -138,6 +138,17 @@
                       </li>
                     {% endfor %}
                   </ul>
+                  <div class="gprep-emergency-mobile-list" aria-label="Current emergency updates">
+                    {% for item in homepage_banner_items %}
+                      <div class="gprep-emergency-mobile-item">
+                        {% if item.banner_prefix %}
+                          <strong>{{ item.banner_prefix|replace({' -': ' -'}) }}</strong> {{ item.banner_message }}
+                        {% else %}
+                          {{ item.banner_message ?: item.title }}
+                        {% endif %}
+                      </div>
+                    {% endfor %}
+                  </div>
                 </div>
               </div>
               <div class="cross"><i class="fa-regular fa-xmark"></i></div>
