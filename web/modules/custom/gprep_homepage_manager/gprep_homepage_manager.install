@@ -710,6 +710,22 @@ function gprep_homepage_manager_update_11014(): void {
 }
 
 /**
+ * Allows decorative resource icons to keep empty alt text when appropriate.
+ */
+function gprep_homepage_manager_update_11015(): void {
+  $field = FieldConfig::loadByName('node', 'resource_item', 'field_icon_image');
+  if (!$field) {
+    return;
+  }
+
+  $field->setSetting('alt_field', TRUE);
+  $field->setSetting('alt_field_required', FALSE);
+  $field->setSetting('title_field', FALSE);
+  $field->setSetting('title_field_required', FALSE);
+  $field->save();
+}
+
+/**
  * Adds an integer field.
  */
 function _gprep_homepage_manager_add_integer_field(string $field_name, string $label, array $bundles): void {
