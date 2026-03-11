@@ -49,9 +49,15 @@ The following homepage sections are now backend-managed:
 - Header/footer contact details and social links
 
 The following inner pages are also now connected:
+- `About Us` page
 - `Enrolled Members` page
+- `Stakeholders` page
+- `Resources` page
+- `FAQ` page
+- `News` page
 - `Contact Us` page
 - `Map` page
+- `Emergency Homepage`
 
 ## 1. Current Emergency Ticker
 
@@ -117,27 +123,30 @@ Editor note:
 This is the right-side updates list on the homepage.
 
 Admin path:
-- `http://localhost:8080/node/add/emergency_update`
+- `http://localhost:8080/admin/gprep/news`
 
 To add a new update:
 1. Log in to Drupal admin.
-2. Open `Content`.
-3. Click `Add content`.
-4. Choose `Emergency Update`.
-5. Fill in the update title and time fields.
-6. Save.
+2. Open `GPREP Admin`.
+3. Open `News`.
+4. Click `Add News`.
+5. Fill in the news title, description, date, and incident.
+6. Save and publish.
 
 To edit or delete:
 1. Go to `Content`.
-2. Filter by content type `Emergency Update`.
+2. Filter by content type `News Item`.
 3. Use `Edit` or `Delete`.
 
 Field notes:
 - `Title`: update headline shown in the panel
-- `Update Time`: exact time text such as `11:15 AM`
-- `Relative Time`: relative text such as `30 min ago`
-- `Update Link`: destination when clicked
-- `Display Order`: lower number shows first
+- `News Description`: summary text shown in cards and detail pages
+- `News Date`: date used for sort/display
+- `Incident`: incident grouping used across the site
+- `Display Order`: lower number shows first when dates are the same
+
+Editor note:
+- this panel now reuses the latest published news items, so one update appears consistently on the homepage, the News page, and the emergency homepage
 
 ## 4. About Us Section
 
@@ -416,7 +425,32 @@ The client can update:
 - Twitter/X URL
 - copyright text
 
-## 14. Enrolled Members Inner Page
+## 14. About Us Page
+
+Public page:
+- `http://localhost:8080/about`
+
+This page follows the approved design and reuses the same global `Partner Municipalities` data already used on the homepage.
+
+What this page currently includes:
+- About page banner and content layout
+- organization information section
+- shared `Partner Municipalities` listing
+
+Admin-managed parts on this page:
+- `Partner Municipalities` logos, names, and order
+- any shared menu or footer details used on the page
+
+Admin paths:
+- partner municipality items: `http://localhost:8080/node/add/partner_municipality`
+- menus: `http://localhost:8080/admin/structure/menu`
+- global site settings: `http://localhost:8080/admin/config/system/gprep-site-settings`
+
+Important note:
+- the core About body content is still theme-managed right now
+- the partner listing on this page is global and dynamic
+
+## 15. Enrolled Members Inner Page
 
 Public page:
 - `http://localhost:8080/enrolled-members`
@@ -438,7 +472,30 @@ What the client can manage here:
 - member image
 - card order
 
-## 15. Contact Us Page
+## 16. Stakeholders Inner Page
+
+Public page:
+- `http://localhost:8080/stakeholders`
+
+This page is connected to the same `Stakeholder Item` content used on the homepage. If the client adds, edits, reorders, or removes stakeholders in Drupal, both the homepage section and the full page update from the same source.
+
+Homepage CTA:
+- the `View All Stakeholders` button links to this page
+
+Admin paths:
+- section intro/button: `http://localhost:8080/node/add/home_stakeholder_section`
+- stakeholder cards: `http://localhost:8080/node/add/stakeholder_item`
+- quick access list: `http://localhost:8080/admin/gprep/stakeholders`
+
+What the client can manage here:
+- section heading and intro text
+- CTA button label and link
+- stakeholder title
+- stakeholder designation
+- stakeholder image
+- card order
+
+## 17. Contact Us Page
 
 Public page:
 - `http://localhost:8080/contact`
@@ -467,7 +524,7 @@ What the client can do:
 Important note:
 - this works similarly to WordPress form plugins in that the admin can both customize fields and see the full list of submitted entries in the backend
 
-## 16. Map Page
+## 18. Map Page
 
 Public page:
 - `http://localhost:8080/map`
@@ -482,7 +539,7 @@ What controls this page:
 
 If the client updates the map embed URL, the map page updates automatically.
 
-## 17. Resources Module And Individual Resource Pages
+## 19. Resources Module And Individual Resource Pages
 
 Public page:
 - `http://localhost:8080/resources`
@@ -511,7 +568,7 @@ Current behavior:
 - each resource item has its own individual page in the approved detail-page format
 - placeholder detail content is currently added and can be replaced later from Drupal admin
 
-## 18. FAQ Module And FAQ Page
+## 20. FAQ Module And FAQ Page
 
 Public page:
 - `http://localhost:8080/faq`
@@ -534,7 +591,7 @@ Current behavior:
 - the `/faq` page is dynamic
 - the same FAQ items are reused for homepage and FAQ page
 
-## 19. Emergency Homepage Mode
+## 21. Emergency Homepage Mode
 
 Public behavior:
 - when `Emergency Mode` is `Off`, `http://localhost:8080/` shows the regular homepage
@@ -644,18 +701,14 @@ Where to edit the actual block content:
    - `Homepage App Section`
    - `Homepage CTA Section`
    - `Homepage Who Is GPREP Section`
-
-Important note:
-- these sections no longer rely on hardcoded theme fallback markup
-- if a block is removed from its region, that homepage section will disappear until a block is placed again
 5. Place blocks in these regions:
    - `Homepage App Section`
    - `Homepage CTA Section`
    - `Homepage Who Is GPREP Section`
 
 Important:
-- if no block is placed in those regions, the current fallback theme design still appears
-- this lets us migrate safely without breaking the homepage
+- these sections no longer rely on hardcoded theme fallback markup
+- if a block is removed from its region, that homepage section will disappear until a block is placed again
 
 ## Recommended Client Workflow
 
@@ -664,7 +717,7 @@ When a new emergency happens:
 2. Update or add a `Hero Slide`.
 3. Review the homepage `About Us` section only if organization messaging needs to change.
 4. Review `Enrolled Members`, `Stakeholders`, `Partner Municipalities`, `Resources`, `FAQ`, and `News` sections if homepage content needs to change.
-5. Add new `Emergency Update` items in order.
+5. Add or update the latest `News` item in order.
 6. Review menu links and contact details only if needed.
 
 ## Current Scope Note
