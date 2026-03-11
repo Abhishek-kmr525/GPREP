@@ -11,7 +11,7 @@ use Drupal\Core\Url;
  * Implements hook_toolbar().
  */
 function gprep_site_settings_toolbar(): array {
-  if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
+  if (!\Drupal::currentUser()->hasPermission('administer gprep site settings')) {
     return [];
   }
 

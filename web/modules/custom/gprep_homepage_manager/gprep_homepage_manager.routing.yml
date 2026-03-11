@@ -4,16 +4,24 @@ gprep_homepage_manager.editorial_dashboard:
     _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::build'
     _title: 'GPREP Editorial'
   requirements:
-    _permission: 'access content overview'
+    _permission: 'access gprep editorial dashboard'
   options:
     _admin_route: true
+
+gprep_homepage_manager.stakeholders_page:
+  path: '/stakeholders'
+  defaults:
+    _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::stakeholdersPage'
+    _title: 'Stakeholders'
+  requirements:
+    _permission: 'access content'
 
 gprep_homepage_manager.news_admin:
   path: '/admin/gprep/news'
   defaults:
     _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::newsRedirect'
   requirements:
-    _permission: 'access content overview'
+    _permission: 'access gprep editorial dashboard'
   options:
     _admin_route: true
 
@@ -22,7 +30,7 @@ gprep_homepage_manager.faq_admin:
   defaults:
     _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::faqRedirect'
   requirements:
-    _permission: 'access content overview'
+    _permission: 'access gprep editorial dashboard'
   options:
     _admin_route: true
 
@@ -31,6 +39,24 @@ gprep_homepage_manager.resource_admin:
   defaults:
     _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::resourceRedirect'
   requirements:
-    _permission: 'access content overview'
+    _permission: 'access gprep editorial dashboard'
+  options:
+    _admin_route: true
+
+gprep_homepage_manager.stakeholder_admin:
+  path: '/admin/gprep/stakeholders'
+  defaults:
+    _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::stakeholderRedirect'
+  requirements:
+    _permission: 'access gprep editorial dashboard'
+  options:
+    _admin_route: true
+
+gprep_homepage_manager.enrolled_admin:
+  path: '/admin/gprep/enrolled-members'
+  defaults:
+    _controller: '\Drupal\gprep_homepage_manager\Controller\EditorialDashboardController::enrolledMembersRedirect'
+  requirements:
+    _permission: 'access gprep editorial dashboard'
   options:
     _admin_route: true

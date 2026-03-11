@@ -4,11 +4,11 @@ gprep_site_settings.form:
     _form: '\Drupal\gprep_site_settings\Form\GprepSiteSettingsForm'
     _title: 'GPREP site settings'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'administer gprep site settings'
 
 gprep_site_settings.emergency_toggle:
   path: '/admin/config/system/gprep-site-settings/emergency-toggle'
   defaults:
     _controller: '\Drupal\gprep_site_settings\Controller\EmergencyModeController::toggle'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'administer gprep site settings'

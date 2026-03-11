@@ -234,11 +234,20 @@ To add or edit stakeholder cards:
 2. Filter by `Stakeholder Item`.
 3. Add, edit, reorder, or unpublish items.
 
+Shortcut paths:
+- stakeholder list: `http://localhost:8080/admin/gprep/stakeholders`
+- add stakeholder: `http://localhost:8080/node/add/stakeholder_item`
+
 Field notes for `Stakeholder Item`:
 - `Title`: person name
 - `Designation`: role text
 - `Profile Image`: card image
 - `Display Order`: controls card order
+
+Stakeholders inner page:
+- public page: `http://localhost:8080/stakeholders`
+- the page reuses the same `Homepage Stakeholders Section` intro and `Stakeholder Item` cards already used on the homepage
+- updates made in admin automatically flow to both the homepage and the `/stakeholders` page
 
 ## 8. Resources Section
 
@@ -647,3 +656,38 @@ When a new emergency happens:
 ## Current Scope Note
 
 This manual covers the homepage sections and the currently connected inner pages. Additional pages and modules should get their own user-manual sections as they are implemented.
+
+## Editorial Roles And Guardrails
+
+The admin setup now supports two client-friendly editorial roles:
+
+- `GPREP Content Editor`
+- `GPREP Site Manager`
+
+Use `GPREP Content Editor` for day-to-day publishing:
+- News
+- FAQ
+- Resources
+- Incident Types
+- Partner Municipalities
+- Enrolled Members
+- Stakeholders
+
+Use `GPREP Site Manager` when the person also needs to manage:
+- homepage section content
+- hero slides
+- emergency ticker items
+- homepage utility blocks
+- GPREP site settings
+- emergency mode toggle
+
+Guardrails applied:
+- the GPREP editorial dashboard uses its own dedicated permission
+- the emergency toggle and GPREP site settings use a dedicated settings permission
+- structure links on the editorial dashboard only show up when that role can actually use them
+
+To assign a role:
+1. Open `People`.
+2. Edit the user account.
+3. Assign either `GPREP Content Editor` or `GPREP Site Manager`.
+4. Save and test the dashboard access.

@@ -1,0 +1,3 @@
+administer gprep site settings:
+  title: 'Administer GPREP site settings'
+  description: 'Manage GPREP global settings, emergency content, map URL, and the emergency mode toggle.'

@@ -81,6 +81,45 @@ gprep_homepage_manager.add_resource_item:
   parent: gprep_homepage_manager.resource_group
   weight: 1
 
+gprep_homepage_manager.people_group:
+  title: 'People'
+  description: 'Manage enrolled member and stakeholder content.'
+  route_name: gprep_homepage_manager.stakeholder_admin
+  parent: gprep_homepage_manager.editorial_dashboard
+  weight: -7
+
+gprep_homepage_manager.enrolled_list:
+  title: 'All Enrolled Members'
+  description: 'View all enrolled member items.'
+  route_name: gprep_homepage_manager.enrolled_admin
+  parent: gprep_homepage_manager.people_group
+  weight: 0
+
+gprep_homepage_manager.enrolled_add_dashboard:
+  title: 'Add Enrolled Member'
+  description: 'Add an enrolled member card.'
+  route_name: node.add
+  route_parameters:
+    node_type: enrolled_member
+  parent: gprep_homepage_manager.people_group
+  weight: 1
+
+gprep_homepage_manager.stakeholder_list:
+  title: 'All Stakeholders'
+  description: 'View all stakeholder items.'
+  route_name: gprep_homepage_manager.stakeholder_admin
+  parent: gprep_homepage_manager.people_group
+  weight: 2
+
+gprep_homepage_manager.stakeholder_add_dashboard:
+  title: 'Add Stakeholder'
+  description: 'Add a stakeholder card.'
+  route_name: node.add
+  route_parameters:
+    node_type: stakeholder_item
+  parent: gprep_homepage_manager.people_group
+  weight: 3
+
 gprep_homepage_manager.add_enrolled_member:
   title: 'Enrolled Member'
   description: 'Add an enrolled member.'

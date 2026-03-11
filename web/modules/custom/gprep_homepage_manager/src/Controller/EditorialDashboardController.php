@@ -14,6 +14,7 @@ class EditorialDashboardController extends ControllerBase {
       $this->metricItem('News', $this->countPublishedNodes('news_item'), 'internal:/admin/gprep/news'),
       $this->metricItem('Resources', $this->countPublishedNodes('resource_item'), 'internal:/admin/gprep/resources'),
       $this->metricItem('FAQs', $this->countPublishedNodes('faq_item'), 'internal:/admin/gprep/faq'),
+      $this->metricItem('Stakeholders', $this->countPublishedNodes('stakeholder_item'), 'internal:/admin/gprep/stakeholders'),
       $this->metricItem('Incidents', $this->countPublishedNodes('incident_type'), 'internal:/admin/content?title=&type=incident_type&status=All'),
     ];
 
@@ -27,13 +28,17 @@ class EditorialDashboardController extends ControllerBase {
           $this->linkItem('All FAQs', 'internal:/admin/gprep/faq', 'Review and edit the FAQ list.'),
           $this->linkItem('Add Resource', 'internal:/node/add/resource_item', 'Create a new resource page item.'),
           $this->linkItem('All Resources', 'internal:/admin/gprep/resources', 'Review and edit all resource pages.'),
+          $this->linkItem('Add Stakeholder', 'internal:/node/add/stakeholder_item', 'Create a stakeholder card used on the homepage and stakeholder page.'),
+          $this->linkItem('All Stakeholders', 'internal:/admin/gprep/stakeholders', 'Review, edit, or unpublish stakeholder cards.'),
+          $this->linkItem('Add Enrolled Member', 'internal:/node/add/enrolled_member', 'Create an enrolled member card used on the homepage and members page.'),
+          $this->linkItem('All Enrolled Members', 'internal:/admin/gprep/enrolled-members', 'Review, edit, or unpublish enrolled member cards.'),
         ],
       ],
       [
         'title' => $this->t('Homepage'),
         'links' => [
-          $this->linkItem('Homepage Blocks', 'internal:/admin/structure/block', 'Edit the App, CTA, and Who is GPREP sections.'),
-          $this->linkItem('Homepage Views', 'internal:/admin/structure/views', 'Manage repeatable homepage sections powered by Views.'),
+          $this->linkItem('Homepage Blocks', 'internal:/admin/structure/block', 'Edit the App, CTA, and Who is GPREP sections.', 'administer blocks'),
+          $this->linkItem('Homepage Views', 'internal:/admin/structure/views', 'Manage repeatable homepage sections powered by Views.', 'administer views'),
           $this->linkItem('Hero Slide', 'internal:/node/add/hero_slide', 'Add a new homepage hero slide.'),
           $this->linkItem('Emergency Banner', 'internal:/node/add/emergency_banner_item', 'Add an emergency ticker item.'),
           $this->linkItem('Homepage Content', 'internal:/admin/content', 'Search homepage content types from the full content list.'),
@@ -42,7 +47,7 @@ class EditorialDashboardController extends ControllerBase {
       [
         'title' => $this->t('Emergency'),
         'links' => [
-          $this->linkItem('Emergency Settings', 'internal:/admin/config/system/gprep-site-settings', 'Turn emergency mode on or off and manage emergency page content.'),
+          $this->linkItem('Emergency Settings', 'internal:/admin/config/system/gprep-site-settings', 'Turn emergency mode on or off and manage emergency page content.', 'administer gprep site settings'),
           $this->linkItem('Add Incident Type', 'internal:/node/add/incident_type', 'Create a new incident option used by news filtering.'),
           $this->linkItem('All Incident Types', 'internal:/admin/content?title=&type=incident_type&status=All', 'Review and edit the current incident labels.'),
           $this->linkItem('Emergency Homepage', 'internal:/', 'Review the public homepage output.'),
@@ -51,11 +56,11 @@ class EditorialDashboardController extends ControllerBase {
       [
         'title' => $this->t('Structure'),
         'links' => [
-          $this->linkItem('Menus', 'internal:/admin/structure/menu', 'Manage main navigation and footer links.'),
-          $this->linkItem('Views', 'internal:/admin/structure/views', 'Manage dynamic listing logic and outputs.'),
-          $this->linkItem('Block Layout', 'internal:/admin/structure/block', 'Manage block placement and regions.'),
-          $this->linkItem('Webforms', 'internal:/admin/structure/webform', 'Manage contact forms and submissions.'),
-          $this->linkItem('Site Settings', 'internal:/admin/config/system/gprep-site-settings', 'Update phone, email, map, and emergency settings.'),
+          $this->linkItem('Menus', 'internal:/admin/structure/menu', 'Manage main navigation and footer links.', 'administer menu'),
+          $this->linkItem('Views', 'internal:/admin/structure/views', 'Manage dynamic listing logic and outputs.', 'administer views'),
+          $this->linkItem('Block Layout', 'internal:/admin/structure/block', 'Manage block placement and regions.', 'administer blocks'),
+          $this->linkItem('Webforms', 'internal:/admin/structure/webform', 'Manage contact forms and submissions.', 'access webform overview'),
+          $this->linkItem('Site Settings', 'internal:/admin/config/system/gprep-site-settings', 'Update phone, email, map, and emergency settings.', 'administer gprep site settings'),
         ],
       ],
     ];
@@ -86,6 +91,12 @@ class EditorialDashboardController extends ControllerBase {
     }
 
     foreach ($sections as $delta => $section) {
+      $visible_links = array_values(array_filter($section['links'], function (array $link): bool {
+        return empty($link['permission']) || $this->currentUser()->hasPermission($link['permission']);
+      }));
+      if (!$visible_links) {
+        continue;
+      }
       $section_build = [
         '#type' => 'container',
         '#attributes' => ['class' => ['gprep-editorial-section']],
@@ -98,7 +109,7 @@ class EditorialDashboardController extends ControllerBase {
         ],
       ];
 
-      foreach ($section['links'] as $index => $link) {
+      foreach ($visible_links as $index => $link) {
         $section_build['links']['link_' . $index] = [
           '#markup' => '<a class="gprep-editorial-link" href="' . $link['url'] . '"><strong>' . $link['title'] . '</strong><span>' . $link['description'] . '</span></a>',
         ];
@@ -122,11 +133,24 @@ class EditorialDashboardController extends ControllerBase {
     return new TrustedRedirectResponse(Url::fromUri('internal:/admin/content?title=&type=resource_item&status=All')->toString());
   }
 
-  private function linkItem(string $title, string $uri, string $description): array {
+  public function stakeholdersPage(): array {
+    return [];
+  }
+
+  public function stakeholderRedirect(): TrustedRedirectResponse {
+    return new TrustedRedirectResponse(Url::fromUri('internal:/admin/content?title=&type=stakeholder_item&status=All')->toString());
+  }
+
+  public function enrolledMembersRedirect(): TrustedRedirectResponse {
+    return new TrustedRedirectResponse(Url::fromUri('internal:/admin/content?title=&type=enrolled_member&status=All')->toString());
+  }
+
+  private function linkItem(string $title, string $uri, string $description, ?string $permission = NULL): array {
     return [
       'title' => $title,
       'url' => Url::fromUri($uri)->toString(),
       'description' => $description,
+      'permission' => $permission,
     ];
   }
 

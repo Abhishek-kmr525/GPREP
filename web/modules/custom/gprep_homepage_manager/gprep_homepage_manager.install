@@ -7,6 +7,7 @@ use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\views\Entity\View;
 use Drupal\block\Entity\Block;
 use Drupal\block_content\Entity\BlockContent;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -614,6 +615,69 @@ HTML;
 }
 
 /**
+ * Creates client-safe editorial roles and guardrail permissions.
+ */
+function gprep_homepage_manager_update_11013(): void {
+  $editor_permissions = [
+    'access administration pages',
+    'access content',
+    'access content overview',
+    'access gprep editorial dashboard',
+    'access toolbar',
+    'use text format basic_html',
+    'view own unpublished content',
+  ];
+  $editor_bundles = [
+    'news_item',
+    'faq_item',
+    'resource_item',
+    'incident_type',
+    'partner_municipality',
+    'enrolled_member',
+    'stakeholder_item',
+  ];
+  foreach ($editor_bundles as $bundle) {
+    $editor_permissions = array_merge($editor_permissions, [
+      "create {$bundle} content",
+      "edit any {$bundle} content",
+      "delete any {$bundle} content",
+    ]);
+  }
+
+  $site_manager_permissions = array_merge($editor_permissions, [
+    'administer gprep site settings',
+    'create and edit custom blocks',
+    'edit any basic block content',
+    'delete any basic block content',
+  ]);
+  $site_manager_bundles = [
+    'hero_slide',
+    'emergency_banner_item',
+    'homepage_about_section',
+    'homepage_partner_section',
+    'homepage_resources_section',
+    'homepage_faq_section',
+    'home_enrolled_section',
+    'home_stakeholder_section',
+    'home_news_section',
+  ];
+  foreach ($site_manager_bundles as $bundle) {
+    $site_manager_permissions = array_merge($site_manager_permissions, [
+      "create {$bundle} content",
+      "edit any {$bundle} content",
+      "delete any {$bundle} content",
+    ]);
+  }
+
+  _gprep_homepage_manager_ensure_role_permissions('administrator', [
+    'access gprep editorial dashboard',
+    'administer gprep site settings',
+  ]);
+  _gprep_homepage_manager_create_or_update_role('gprep_content_editor', 'GPREP Content Editor', $editor_permissions);
+  _gprep_homepage_manager_create_or_update_role('gprep_site_manager', 'GPREP Site Manager', $site_manager_permissions);
+}
+
+/**
  * Adds an integer field.
  */
 function _gprep_homepage_manager_add_integer_field(string $field_name, string $label, array $bundles): void {
@@ -1104,4 +1168,47 @@ function _gprep_homepage_manager_place_block(string $block_id, string $uuid, str
     $block->setWeight($weight);
   }
   $block->save();
+}
+
+/**
+ * Creates or updates a role to match the target permission set.
+ */
+function _gprep_homepage_manager_create_or_update_role(string $id, string $label, array $permissions): void {
+  $role = Role::load($id);
+  if (!$role) {
+    $role = Role::create([
+      'id' => $id,
+      'label' => $label,
+    ]);
+  }
+  else {
+    $role->set('label', $label);
+  }
+
+  $available_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
+  $target_permissions = array_values(array_intersect(array_unique($permissions), $available_permissions));
+
+  foreach ($role->getPermissions() as $permission) {
+    $role->revokePermission($permission);
+  }
+  foreach ($target_permissions as $permission) {
+    $role->grantPermission($permission);
+  }
+  $role->save();
+}
+
+/**
+ * Ensures an existing role receives additional permissions.
+ */
+function _gprep_homepage_manager_ensure_role_permissions(string $id, array $permissions): void {
+  $role = Role::load($id);
+  if (!$role) {
+    return;
+  }
+
+  $available_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
+  foreach (array_intersect(array_unique($permissions), $available_permissions) as $permission) {
+    $role->grantPermission($permission);
+  }
+  $role->save();
 }

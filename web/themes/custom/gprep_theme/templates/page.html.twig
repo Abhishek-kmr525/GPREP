@@ -563,6 +563,11 @@
               </div>
             {% endfor %}
           </div>
+          {% if homepage_stakeholders_section.button_text and homepage_stakeholders_section.button_link %}
+            <div class="text-center mt-4">
+              <a href="{{ homepage_stakeholders_section.button_link }}" class="theme-btn theme-btn2">{{ homepage_stakeholders_section.button_text }}<i class="fas fa-arrow-right"></i></a>
+            </div>
+          {% endif %}
         </div>
       </div>
     {% endif %}
@@ -863,6 +868,55 @@
             </div>
           {% endfor %}
         </div>
+      </div>
+    </div>
+  {% elseif is_stakeholders_page %}
+    <div class="site-breadcrumb" style="background: url('{{ theme_path }}/assets/img/breadcrumb/01.jpg')">
+      <div class="container">
+        <h2 class="breadcrumb-title">Stakeholders</h2>
+        <ul class="breadcrumb-menu">
+          <li><a href="{{ front_page }}">Home</a></li>
+          <li class="active">Stakeholders</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="event-area py-5 contentsAreaPanel">
+      <div class="container">
+        <div class="boxPanel-02">
+          <h4>{{ stakeholders_page_section.title ?: 'GPREP Stakeholders' }}</h4>
+          {% if stakeholders_page_section.primary_body %}
+            {{ stakeholders_page_section.primary_body|raw }}
+          {% endif %}
+        </div>
+
+        <div class="row">
+          {% for item in stakeholders_page_items %}
+            <div class="col-md-6 col-lg-3 mb-5">
+              <div class="team-item mb-0 sd_01">
+                <div class="team-img">
+                  {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                  {% endif %}
+                </div>
+                <div class="team-content">
+                  <div class="team-bio">
+                    <h5>{{ item.title }}</h5>
+                    {% if item.person_role %}
+                      <span>{{ item.person_role }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if stakeholders_page_section.button_text and stakeholders_page_section.button_link %}
+          <div class="text-center mt-3">
+            <a href="{{ stakeholders_page_section.button_link }}" class="theme-btn theme-btn2">{{ stakeholders_page_section.button_text }}<i class="fas fa-arrow-right"></i></a>
+          </div>
+        {% endif %}
       </div>
     </div>
   {% elseif is_resources_page %}

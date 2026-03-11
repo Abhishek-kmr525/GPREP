@@ -32,6 +32,7 @@ function gprep_theme_preprocess_page(array &$variables): void {
   $variables['current_path_alias'] = $current_path_alias;
   $variables['is_about_page'] = $current_path_alias === '/about';
   $variables['is_enrolled_members_page'] = $current_path_alias === '/enrolled-members';
+  $variables['is_stakeholders_page'] = $current_path_alias === '/stakeholders';
   $variables['is_contact_page'] = $current_path_alias === '/contact';
   $variables['is_map_page'] = $current_path_alias === '/map';
   $variables['is_resources_page'] = $current_path_alias === '/resources';
@@ -87,6 +88,10 @@ function gprep_theme_preprocess_page(array &$variables): void {
   if ($variables['is_enrolled_members_page']) {
     $variables['enrolled_members_page_section'] = gprep_theme_get_homepage_single_node('home_enrolled_section');
     $variables['enrolled_members_page_items'] = gprep_theme_get_homepage_nodes('enrolled_member', 50);
+  }
+  if ($variables['is_stakeholders_page']) {
+    $variables['stakeholders_page_section'] = gprep_theme_get_homepage_single_node('home_stakeholder_section');
+    $variables['stakeholders_page_items'] = gprep_theme_get_homepage_nodes('stakeholder_item', 50);
   }
   if ($variables['is_resources_page']) {
     $variables['resources_page_section'] = gprep_theme_get_homepage_single_node('homepage_resources_section');
