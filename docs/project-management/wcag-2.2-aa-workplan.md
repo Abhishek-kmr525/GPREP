@@ -156,6 +156,12 @@ Checklist:
 - review orientation behavior on mobile and tablet
 - review autocomplete/input-purpose support on forms
 
+Implemented for this card:
+- added explicit navigation labels for the primary and emergency tabbed navigation
+- added descriptive titles to the public map iframes
+- confirmed a single main landmark with header and footer landmarks on the main public templates
+- added contact form input-purpose metadata for name and email fields using Webform autocomplete support
+
 ## Card 4. WCAG 2.2 AA Perceivable: Color, Contrast, Reflow, and Visibility
 
 Success criteria covered:

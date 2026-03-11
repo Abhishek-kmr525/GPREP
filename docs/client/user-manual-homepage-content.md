@@ -523,6 +523,7 @@ What the client can do:
 
 Important note:
 - this works similarly to WordPress form plugins in that the admin can both customize fields and see the full list of submitted entries in the backend
+- the default public contact form now includes browser autocomplete metadata for the name and email fields, so replacement fields should preserve clear labels and appropriate input purpose where possible
 
 ## 18. Map Page
 

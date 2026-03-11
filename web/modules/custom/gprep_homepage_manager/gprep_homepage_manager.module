@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * @file
+ * Runtime form alterations for the GPREP editorial experience.
+ */
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ */
+function gprep_homepage_manager_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
+  if ($form_id !== 'contact_us') {
+    return;
+  }
+
+  _gprep_homepage_manager_alter_contact_webform($form);
+}
+
+/**
+ * Implements hook_form_webform_submission_contact_us_form_alter().
+ */
+function gprep_homepage_manager_form_webform_submission_contact_us_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
+  _gprep_homepage_manager_alter_contact_webform($form);
+}
+
+/**
+ * Implements hook_form_webform_submission_contact_us_node_47_add_form_alter().
+ */
+function gprep_homepage_manager_form_webform_submission_contact_us_node_47_add_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
+  _gprep_homepage_manager_alter_contact_webform($form);
+}
+
+/**
+ * Adds accessibility metadata to the public contact form fields.
+ */
+function _gprep_homepage_manager_alter_contact_webform(array &$form): void {
+  if (isset($form['name'])) {
+    $form['name']['#autocomplete'] = 'name';
+    $form['name']['#attributes']['autocomplete'] = 'name';
+  }
+  if (isset($form['email'])) {
+    $form['email']['#autocomplete'] = 'email';
+    $form['email']['#attributes']['autocomplete'] = 'email';
+    $form['email']['#attributes']['inputmode'] = 'email';
+  }
+}
+
+/**
+ * Implements hook_webform_element_alter().
+ */
+function gprep_homepage_manager_webform_element_alter(array &$element, FormStateInterface $form_state, array $context): void {
+  $form_object = $form_state->getFormObject();
+  if (!method_exists($form_object, 'getEntity')) {
+    return;
+  }
+
+  $webform_submission = $form_object->getEntity();
+  if (!$webform_submission || !$webform_submission->getWebform() || $webform_submission->getWebform()->id() !== 'contact_us') {
+    return;
+  }
+
+  $key = $element['#webform_key'] ?? NULL;
+  if ($key === 'name') {
+    $element['#autocomplete'] = 'name';
+    $element['#attributes']['autocomplete'] = 'name';
+  }
+  elseif ($key === 'email') {
+    $element['#autocomplete'] = 'email';
+    $element['#attributes']['autocomplete'] = 'email';
+    $element['#attributes']['inputmode'] = 'email';
+  }
+}
