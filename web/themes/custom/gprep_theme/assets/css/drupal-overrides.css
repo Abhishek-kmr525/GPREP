@@ -206,6 +206,42 @@
   z-index: 99;
 }
 
+label {
+  color: #666;
+}
+
+*::placeholder,
+*::-moz-placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+.team-bio span {
+  color: #666;
+}
+
+.newsRightSection ul.marquee_mode li a > span span {
+  color: #8a140c;
+}
+
+input,
+textarea,
+select,
+.form-control,
+.form-select {
+  border-color: #767676;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.form-control:focus,
+.form-select:focus {
+  border-color: #054b7e;
+  box-shadow: 0 0 0 3px rgba(5, 75, 126, 0.18);
+  outline: 2px solid transparent;
+}
+
 .news-filters .form-label {
   color: #054b7e;
   font-weight: 600;

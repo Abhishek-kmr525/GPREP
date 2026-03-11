@@ -178,6 +178,16 @@ Success criteria covered:
 Checklist:
 - review text contrast across all templates
 - review non-text contrast for buttons, borders, inputs, tabs, and focus states
+- review page behavior at 320px width and high zoom-equivalent reflow
+- review text spacing resilience on key public templates
+- confirm hover-only content is not required to access public information
+
+Implemented for this card:
+- darkened public form labels, placeholders, and member role text to pass minimum text contrast on white backgrounds
+- darkened emergency update relative-time text so it passes contrast on the light blue update cards
+- strengthened public form field borders and focus treatment for non-text contrast
+- verified the main public templates reflow within a 320px viewport without horizontal scrolling
+- confirmed there is no public autoplay audio and no required images-of-text content in the current templates
 - review resize text up to 200 percent
 - review reflow at mobile and zoomed desktop widths
 - review text spacing overrides
