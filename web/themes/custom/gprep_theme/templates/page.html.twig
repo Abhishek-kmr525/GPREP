@@ -453,7 +453,7 @@
               <div class="about-left wow fadeInLeft" data-wow-delay=".25s">
                 <div class="about-img">
                   {% if homepage_about_section.image_url %}
-                    <img src="{{ homepage_about_section.image_url }}" alt="{{ homepage_about_section.title }}">
+                    <img src="{{ homepage_about_section.image_url }}" alt="{{ homepage_about_section.image_alt ?: homepage_about_section.title }}">
                   {% endif %}
                 </div>
               </div>
@@ -515,7 +515,7 @@
                 <div class="team-item mb-0" data-wow-delay=".25s">
                   <div class="team-img">
                     {% if item.image_url %}
-                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                      <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                     {% endif %}
                   </div>
                   <div class="team-content">
@@ -559,7 +559,7 @@
                 <div class="team-item mb-0" data-wow-delay=".25s">
                   <div class="team-img">
                     {% if item.image_url %}
-                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                      <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                     {% endif %}
                   </div>
                   <div class="team-content">
@@ -598,7 +598,7 @@
             <div class="partner-wrapper gprep-partner-grid">
               {% for item in homepage_partner_municipalities %}
                 <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
-                  <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                  <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                 </a>
               {% endfor %}
             </div>
@@ -625,14 +625,14 @@
                   <div class="service-img-wrap">
                     <div class="service-img">
                       {% if item.image_url %}
-                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                        <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                       {% endif %}
                     </div>
                   </div>
                   <div class="service-content">
                     {% if item.icon_image_url %}
                       <div class="service-icon">
-                        <img src="{{ item.icon_image_url }}" alt="{{ item.title }}">
+                        <img src="{{ item.icon_image_url }}" alt="{{ item.icon_image_alt }}">
                       </div>
                     {% endif %}
                     <h3 class="service-title">
@@ -724,7 +724,7 @@
                   </div>
                   <div class="campaign-img">
                     {% if item.image_url %}
-                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                      <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                     {% endif %}
                   </div>
                   <div class="campaign-content">
@@ -830,7 +830,7 @@
             <div class="partner-wrapper gprep-partner-grid">
               {% for item in about_page_partner_municipalities %}
                 <a href="{{ item.partner_url ?: '#' }}"{% if item.partner_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
-                  <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                  <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                 </a>
               {% endfor %}
             </div>
@@ -864,7 +864,7 @@
               <div class="team-item mb-0 sd_01">
                 <div class="team-img">
                   {% if item.image_url %}
-                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                   {% endif %}
                 </div>
                 <div class="team-content">
@@ -907,7 +907,7 @@
               <div class="team-item mb-0 sd_01">
                 <div class="team-img">
                   {% if item.image_url %}
-                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                   {% endif %}
                 </div>
                 <div class="team-content">
@@ -957,14 +957,14 @@
                 <div class="service-img-wrap">
                   <div class="service-img">
                     {% if item.image_url %}
-                      <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                      <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                     {% endif %}
                   </div>
                 </div>
                 <div class="service-content">
                   {% if item.icon_image_url %}
                     <div class="service-icon">
-                      <img src="{{ item.icon_image_url }}" alt="{{ item.title }}">
+                      <img src="{{ item.icon_image_url }}" alt="{{ item.icon_image_alt }}">
                     </div>
                   {% endif %}
                   <h3 class="service-title">
@@ -1062,7 +1062,7 @@
               <div class="event-item wow fadeInUp" data-wow-delay=".25s">
                 <div class="event-img">
                   {% if item.image_url %}
-                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                   {% endif %}
                 </div>
                 <div class="event-content">
@@ -1121,7 +1121,7 @@
               <div class="service-details">
                 {% if resource_detail_item.image_url %}
                   <div class="service-details-img mb-30">
-                    <img src="{{ resource_detail_item.image_url }}" alt="{{ resource_detail_item.title }}">
+                    <img src="{{ resource_detail_item.image_url }}" alt="{{ resource_detail_item.image_alt ?: resource_detail_item.title }}">
                   </div>
                 {% endif %}
                 <div class="service-details">
@@ -1158,7 +1158,7 @@
               <div class="blog-single-content">
                 {% if news_detail_item.image_url %}
                   <div class="blog-thumb-img">
-                    <img src="{{ news_detail_item.image_url }}" alt="{{ news_detail_item.title }}">
+                    <img src="{{ news_detail_item.image_url }}" alt="{{ news_detail_item.image_alt ?: news_detail_item.title }}">
                   </div>
                 {% endif %}
                 <div class="blog-info">
@@ -1213,7 +1213,7 @@
                   <div class="recent-post-single">
                     <div class="recent-post-img">
                       {% if item.image_url %}
-                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                        <img src="{{ item.image_url }}" alt="{{ item.image_alt ?: item.title }}">
                       {% endif %}
                     </div>
                     <div class="recent-post-bio">

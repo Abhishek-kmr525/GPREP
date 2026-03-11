@@ -225,7 +225,6 @@ function gprep_theme_get_homepage_nodes(string $bundle, int $limit): array {
  * Returns a normalized homepage node.
  */
 function gprep_theme_normalize_homepage_node(NodeInterface $node): array {
-  $file_url_generator = \Drupal::service('file_url_generator');
   $bundle = $node->bundle();
   $item = [
     'nid' => (int) $node->id(),
@@ -245,7 +244,9 @@ function gprep_theme_normalize_homepage_node(NodeInterface $node): array {
     'button_text' => '',
     'button_link' => '',
     'image_url' => '',
+    'image_alt' => '',
     'icon_image_url' => '',
+    'icon_image_alt' => '',
     'partner_url' => '',
     'update_time' => '',
     'update_relative_time' => '',
@@ -290,20 +291,16 @@ function gprep_theme_normalize_homepage_node(NodeInterface $node): array {
     $item['button_link'] = $node->get('field_button_link')->first()->getUrl()->toString();
   }
   foreach (['field_slide_image', 'field_section_image', 'field_logo_image', 'field_card_image', 'field_profile_image'] as $field_name) {
-    if ($node->hasField($field_name) && !$node->get($field_name)->isEmpty()) {
-      $file = $node->get($field_name)->entity;
-      if ($file) {
-        $item['image_url'] = $file_url_generator->generateString($file->getFileUri());
-        break;
-      }
+    $image = gprep_theme_extract_image_field($node, $field_name);
+    if ($image['url'] !== '') {
+      $item['image_url'] = $image['url'];
+      $item['image_alt'] = $image['alt'];
+      break;
     }
   }
-  if ($node->hasField('field_icon_image') && !$node->get('field_icon_image')->isEmpty()) {
-    $file = $node->get('field_icon_image')->entity;
-    if ($file) {
-      $item['icon_image_url'] = $file_url_generator->generateString($file->getFileUri());
-    }
-  }
+  $icon_image = gprep_theme_extract_image_field($node, 'field_icon_image');
+  $item['icon_image_url'] = $icon_image['url'];
+  $item['icon_image_alt'] = $icon_image['alt'];
   if ($node->hasField('field_update_time') && !$node->get('field_update_time')->isEmpty()) {
     $item['update_time'] = $node->get('field_update_time')->value;
   }
@@ -339,6 +336,31 @@ function gprep_theme_get_homepage_single_node(string $bundle): array {
 }
 
 /**
+ * Extracts normalized image data from an image field.
+ */
+function gprep_theme_extract_image_field(NodeInterface $node, string $field_name): array {
+  $item = [
+    'url' => '',
+    'alt' => '',
+  ];
+
+  if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+    return $item;
+  }
+
+  $field_item = $node->get($field_name)->first();
+  $file = $field_item?->entity;
+  if (!$file) {
+    return $item;
+  }
+
+  $item['url'] = \Drupal::service('file_url_generator')->generateString($file->getFileUri());
+  $item['alt'] = trim((string) ($field_item->alt ?? ''));
+
+  return $item;
+}
+
+/**
  * Returns a normalized node for detail templates.
  */
 function gprep_theme_normalize_detail_node(NodeInterface $node): array {
@@ -349,6 +371,7 @@ function gprep_theme_normalize_detail_node(NodeInterface $node): array {
     'summary' => '',
     'body' => '',
     'image_url' => '',
+    'image_alt' => '',
   ];
 
   if ($node->hasField('field_resource_summary') && !$node->get('field_resource_summary')->isEmpty()) {
@@ -357,12 +380,9 @@ function gprep_theme_normalize_detail_node(NodeInterface $node): array {
   if ($node->hasField('field_resource_body') && !$node->get('field_resource_body')->isEmpty()) {
     $item['body'] = $node->get('field_resource_body')->value;
   }
-  if ($node->hasField('field_card_image') && !$node->get('field_card_image')->isEmpty()) {
-    $file = $node->get('field_card_image')->entity;
-    if ($file) {
-      $item['image_url'] = \Drupal::service('file_url_generator')->generateString($file->getFileUri());
-    }
-  }
+  $image = gprep_theme_extract_image_field($node, 'field_card_image');
+  $item['image_url'] = $image['url'];
+  $item['image_alt'] = $image['alt'];
 
   return $item;
 }
@@ -460,6 +480,7 @@ function gprep_theme_normalize_news_detail_node(NodeInterface $node): array {
     'summary' => '',
     'body' => '',
     'image_url' => '',
+    'image_alt' => '',
     'display_date' => date('j M Y', $node->getCreatedTime()),
     'display_date_long' => date('F j, Y', $node->getCreatedTime()),
     'display_time' => '',
@@ -475,12 +496,9 @@ function gprep_theme_normalize_news_detail_node(NodeInterface $node): array {
   if ($node->hasField('field_news_body') && !$node->get('field_news_body')->isEmpty()) {
     $item['body'] = $node->get('field_news_body')->value;
   }
-  if ($node->hasField('field_card_image') && !$node->get('field_card_image')->isEmpty()) {
-    $file = $node->get('field_card_image')->entity;
-    if ($file) {
-      $item['image_url'] = \Drupal::service('file_url_generator')->generateString($file->getFileUri());
-    }
-  }
+  $image = gprep_theme_extract_image_field($node, 'field_card_image');
+  $item['image_url'] = $image['url'];
+  $item['image_alt'] = $image['alt'];
   if ($node->hasField('field_display_time') && !$node->get('field_display_time')->isEmpty()) {
     $item['display_time'] = $node->get('field_display_time')->value;
   }

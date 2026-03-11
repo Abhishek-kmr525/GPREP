@@ -3,14 +3,14 @@
     <div class="service-img-wrap">
       <div class="service-img">
         {% if gprep_item.image_url %}
-          <img src="{{ gprep_item.image_url }}" alt="{{ gprep_item.title }}">
+          <img src="{{ gprep_item.image_url }}" alt="{{ gprep_item.image_alt ?: gprep_item.title }}">
         {% endif %}
       </div>
     </div>
     <div class="service-content">
       {% if gprep_item.icon_image_url %}
         <div class="service-icon">
-          <img src="{{ gprep_item.icon_image_url }}" alt="{{ gprep_item.title }}">
+          <img src="{{ gprep_item.icon_image_url }}" alt="{{ gprep_item.icon_image_alt }}">
         </div>
       {% endif %}
       <h3 class="service-title">

@@ -678,6 +678,38 @@ function gprep_homepage_manager_update_11013(): void {
 }
 
 /**
+ * Tightens image accessibility guidance for editorial content.
+ */
+function gprep_homepage_manager_update_11014(): void {
+  $required_alt_fields = [
+    'hero_slide' => ['field_slide_image'],
+    'homepage_about_section' => ['field_section_image'],
+    'partner_municipality' => ['field_logo_image'],
+    'resource_item' => ['field_card_image'],
+    'enrolled_member' => ['field_profile_image'],
+    'stakeholder_item' => ['field_profile_image'],
+    'news_item' => ['field_card_image'],
+  ];
+
+  foreach ($required_alt_fields as $bundle => $fields) {
+    foreach ($fields as $field_name) {
+      _gprep_homepage_manager_set_image_alt_requirements($bundle, $field_name, TRUE);
+    }
+  }
+
+  _gprep_homepage_manager_set_image_alt_requirements('resource_item', 'field_icon_image', FALSE);
+
+  _gprep_homepage_manager_update_field_metadata('node', 'hero_slide', 'field_slide_image', 'Slide Background Image', 'Upload the main background image for this hero slide and add meaningful alt text.');
+  _gprep_homepage_manager_update_field_metadata('node', 'homepage_about_section', 'field_section_image', 'Section Image', 'Primary image used in the About section. Add meaningful alt text.');
+  _gprep_homepage_manager_update_field_metadata('node', 'partner_municipality', 'field_logo_image', 'Logo Image', 'Upload the partner logo and add alt text that names the municipality or organization.');
+  _gprep_homepage_manager_update_field_metadata('node', 'resource_item', 'field_card_image', 'Resource Card Image', 'Featured image for the resource card and detail header. Add meaningful alt text.');
+  _gprep_homepage_manager_update_field_metadata('node', 'resource_item', 'field_icon_image', 'Resource Icon', 'Small supporting icon used in the resource card layout. Leave alt text empty only if the icon is decorative.');
+  _gprep_homepage_manager_update_field_metadata('node', 'enrolled_member', 'field_profile_image', 'Profile Image', 'Upload the member image and add alt text, usually the person name.');
+  _gprep_homepage_manager_update_field_metadata('node', 'stakeholder_item', 'field_profile_image', 'Profile Image', 'Upload the stakeholder image and add alt text, usually the person or organization name.');
+  _gprep_homepage_manager_update_field_metadata('node', 'news_item', 'field_card_image', 'News Image', 'Featured image used on the news listing and detail page. Add meaningful alt text.');
+}
+
+/**
  * Adds an integer field.
  */
 function _gprep_homepage_manager_add_integer_field(string $field_name, string $label, array $bundles): void {
@@ -699,6 +731,24 @@ function _gprep_homepage_manager_add_integer_field(string $field_name, string $l
       ])->save();
     }
   }
+}
+
+/**
+ * Ensures image alt text settings are enabled for a field.
+ */
+function _gprep_homepage_manager_set_image_alt_requirements(string $bundle, string $field_name, bool $required): void {
+  $field = FieldConfig::loadByName('node', $bundle, $field_name);
+  if (!$field) {
+    return;
+  }
+
+  $settings = $field->getSettings();
+  $settings['alt_field'] = TRUE;
+  $settings['alt_field_required'] = $required;
+  $settings['title_field'] = FALSE;
+  $settings['title_field_required'] = FALSE;
+  $field->setSettings($settings);
+  $field->save();
 }
 
 /**

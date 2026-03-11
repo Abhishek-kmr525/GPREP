@@ -651,6 +651,8 @@ Recommended emergency publishing order:
 - Use `Display Order` to control the sequence instead of deleting and recreating items.
 - For homepage items, keep titles short so the design remains clean.
 - Banner images should be optimized before upload for better performance.
+- Major content image fields now require meaningful alt text for accessibility.
+- Decorative support icons can keep empty alt text only when nearby visible text already communicates the same meaning.
 
 ## Homepage Views And Blocks
 
